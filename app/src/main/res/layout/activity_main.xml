@@ -58,7 +58,7 @@
             android:id="@+id/takePhotoButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
+            android:layout_marginBottom="0dp"
             android:backgroundTint="@color/teal_700"
             android:text="@string/take_photo_button_label"
             android:textSize="20sp" />
@@ -67,7 +67,7 @@
             android:id="@+id/loadPhotoButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
+            android:layout_marginBottom="0dp"
             android:backgroundTint="@color/teal_700"
             android:text="@string/load_photo_button_label"
             android:textSize="20sp" />
@@ -76,7 +76,7 @@
             android:id="@+id/stylizeImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
+            android:layout_marginBottom="0dp"
             android:backgroundTint="@color/teal_700"
             android:text="@string/stylize_image_button_label"
             android:textSize="20sp" />
