@@ -73,12 +73,12 @@
             android:textSize="20sp" />
 
         <Button
-            android:id="@+id/stylizeImage"
+            android:id="@+id/stylizePhotoButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="0dp"
             android:backgroundTint="@color/teal_700"
-            android:text="@string/stylize_image_button_label"
+            android:text="@string/stylize_photo_button_label"
             android:textSize="20sp" />
     </TableLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
