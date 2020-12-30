@@ -71,6 +71,9 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         if (item.getItemId() == R.id.action_settings) {
             Log.d(loggerTag, "Entering settings");
+            Intent enterSettingIntent = new Intent(this, SettingsActivity.class);
+            startActivity(enterSettingIntent);
+
             return true;
         }
 
