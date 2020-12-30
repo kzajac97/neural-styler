@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         // load controls
         takePhotoButton = findViewById(R.id.takePhotoButton);
         loadPhotoButton = findViewById(R.id.loadPhotoButton);
-        stylizePhotoButton = findViewById(R.id.stylizePhotoButton);
+        stylizePhotoButton = findViewById(R.id.savePhotoButton);
         // set listeners
         takePhotoButton.setOnClickListener(takePhotoButtonOnClickListener);
         loadPhotoButton.setOnClickListener(loadPhotoButtonOnClickListener);

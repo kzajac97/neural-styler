@@ -1,16 +1,25 @@
 package com.example.neuralstyler;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.Spinner;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 public class NeuralStylerActivity extends AppCompatActivity {
-
+    // UI controls
+    ImageView inputImageView;
+    Button savePhotoButton;
+    Button stylizePhotoButton;
+    Spinner styleSelectorSpinner;
+    // private variables
     private final String loggerTag = "NeuralStylerLogger";
 
     @Override
@@ -20,6 +29,16 @@ public class NeuralStylerActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        inputImageView = findViewById(R.id.inputImageView);
+
+        savePhotoButton = findViewById(R.id.savePhotoButton);
+        savePhotoButton.setOnClickListener(savePhotoButtonOnClickListener);
+
+        stylizePhotoButton = findViewById(R.id.stylizePhotoButton);
+        stylizePhotoButton.setOnClickListener(stylizePhotoButtonOnClickListener);
+
+        styleSelectorSpinner = findViewById(R.id.styleSelectorSpinner);
     }
 
     @Override
@@ -44,4 +63,18 @@ public class NeuralStylerActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    /**
+     * Saves generated image into Gallery
+     */
+    final View.OnClickListener savePhotoButtonOnClickListener = v -> {
+        // TODO: Save saving image here
+    };  // savePhotoButtonOnClickListener
+
+    /**
+     *
+     */
+    final View.OnClickListener stylizePhotoButtonOnClickListener = v -> {
+        // TODO: Save saving image here
+    };  // stylizePhotoButtonOnClickListener
 }
