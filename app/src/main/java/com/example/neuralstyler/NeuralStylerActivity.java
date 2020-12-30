@@ -1,8 +1,16 @@
 package com.example.neuralstyler;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,11 +19,17 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NavUtils;
+import androidx.core.content.ContextCompat;
 
+import java.io.File;
+import java.io.IOException;
+
+@RequiresApi(api = Build.VERSION_CODES.M)
 public class NeuralStylerActivity extends AppCompatActivity {
     // UI controls
     ImageView inputImageView;
@@ -24,11 +38,13 @@ public class NeuralStylerActivity extends AppCompatActivity {
     Spinner styleSelectorSpinner;
     // private variables
     private final String loggerTag = "NeuralStylerLogger";
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_neural_styler);
+        context = getApplicationContext();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -94,9 +110,29 @@ public class NeuralStylerActivity extends AppCompatActivity {
     /**
      * Saves generated image into Gallery
      */
+
     final View.OnClickListener savePhotoButtonOnClickListener = v -> {
-        // TODO: Save saving image here
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            Log.d(loggerTag, "Permission not granted!");
+            requestPermissions(new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE }, 1);
+        }
+        saveImageToGallery(((BitmapDrawable) inputImageView.getDrawable()).getBitmap());
     };  // savePhotoButtonOnClickListener
+
+    /**
+     * Saves image to MediaStore
+     *
+     * @param image Bitmap object with generated image
+     */
+    final void saveImageToGallery(Bitmap image) {
+        Log.d(loggerTag, "Saving image:" + image.toString());
+        MediaStore.Images.Media.insertImage(
+                getContentResolver(),
+                image,
+                "NeuralStyleImage",
+                "Image Generated with Neural Style Transfer algorithm."
+        );
+    }
 
     /**
      *

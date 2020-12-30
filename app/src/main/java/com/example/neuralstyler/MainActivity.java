@@ -108,12 +108,37 @@ public class MainActivity extends AppCompatActivity {
         startCameraActivityForResult();
     };  // takePhotoButtonOnClickListener
 
+    /**
+     * Functions handling Android Gallery to select any picture
+     */
+    private void startGalleryActivityForResult() {
+        Intent selectPhotoIntent = new Intent(Intent.ACTION_PICK);
+        selectPhotoIntent.setType("image/*");
+
+        try {
+            Log.d(loggerTag, "Starting Gallery Activity");
+            startActivityForResult(selectPhotoIntent, RESULT_LOAD_IMG);
+        } catch (ActivityNotFoundException e) {
+            Log.e(loggerTag, "Error! Activity not found!" + e.toString());
+        }
+    }
+
+    final View.OnClickListener loadPhotoButtonOnClickListener = v -> {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            Log.d(loggerTag, "Permission not granted!");
+            requestPermissions(new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, 1);
+        }
+        startGalleryActivityForResult();
+    };  // loadPhotoButtonOnClickListener
+
+    /**
+     * handles actions on activity result
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-
-         // Loads image from captured with camera
+        // Loads image from captured with camera
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
             Log.d(loggerTag, "Image captured");
             Bitmap photo = (Bitmap) data.getExtras().get("data");
@@ -136,31 +161,9 @@ public class MainActivity extends AppCompatActivity {
             // display image on ImageView
             Bitmap photo = BitmapFactory.decodeStream(imageStream);
             inputImageView.setImageBitmap(photo);
+            Log.d(loggerTag, "Image displayed");
         }
     }  // onActivityResult
-
-    /**
-     * Functions handling Android Gallery to select any picture
-     */
-    private void startGalleryActivityForResult() {
-        Intent selectPhotoIntent = new Intent(Intent.ACTION_PICK);
-        selectPhotoIntent.setType("image/*");
-
-        try {
-            Log.d(loggerTag, "Starting Camera Activity");
-            startActivityForResult(selectPhotoIntent, RESULT_LOAD_IMG);
-        } catch (ActivityNotFoundException e) {
-            Log.e(loggerTag, "Error! Activity not found!" + e.toString());
-        }
-    }
-
-    final View.OnClickListener loadPhotoButtonOnClickListener = v -> {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            Log.d(loggerTag, "Permission not granted!");
-            requestPermissions(new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, 1);
-        }
-        startGalleryActivityForResult();
-    };  // loadPhotoButtonOnClickListener
 
     /**
      * Function starts NeuralStylerActivity
@@ -170,10 +173,12 @@ public class MainActivity extends AppCompatActivity {
 
         if (inputImageView.getDrawable() != null) {
             Log.d(loggerTag, "Putting data into extras Bundle");
+            // TODO: Pass via URI, bitmap can crash
             Bitmap image = ((BitmapDrawable) inputImageView.getDrawable()).getBitmap();
             neuralStylerIntent.putExtra("image", image);
 
             Log.d(loggerTag, "Starting NeuralStyler");
+            Log.d(loggerTag, image.toString());
             startActivity(neuralStylerIntent);
         } else {
             Log.d(loggerTag, "Attempted starting NeuralStyler with empty image");
