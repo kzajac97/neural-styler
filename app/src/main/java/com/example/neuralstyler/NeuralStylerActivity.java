@@ -1,15 +1,12 @@
 package com.example.neuralstyler;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
@@ -26,9 +23,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NavUtils;
 import androidx.core.content.ContextCompat;
 
-import java.io.File;
-import java.io.IOException;
-
 @RequiresApi(api = Build.VERSION_CODES.M)
 public class NeuralStylerActivity extends AppCompatActivity {
     // UI controls
@@ -38,13 +32,11 @@ public class NeuralStylerActivity extends AppCompatActivity {
     Spinner styleSelectorSpinner;
     // private variables
     private final String loggerTag = "NeuralStylerLogger";
-    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_neural_styler);
-        context = getApplicationContext();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -79,19 +71,15 @@ public class NeuralStylerActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_settings) {  // settings button
             Log.d(loggerTag, "Entering settings");
             Intent enterSettingIntent = new Intent(this, SettingsActivity.class);
             startActivity(enterSettingIntent);
@@ -99,7 +87,7 @@ public class NeuralStylerActivity extends AppCompatActivity {
             return true;
         }
 
-        if (id == R.id.home) {
+        if (id == R.id.home) {  // Back button
             NavUtils.navigateUpFromSameTask(this);
             return true;
         }
@@ -110,7 +98,6 @@ public class NeuralStylerActivity extends AppCompatActivity {
     /**
      * Saves generated image into Gallery
      */
-
     final View.OnClickListener savePhotoButtonOnClickListener = v -> {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             Log.d(loggerTag, "Permission not granted!");
