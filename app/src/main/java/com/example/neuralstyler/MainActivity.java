@@ -3,10 +3,12 @@ package com.example.neuralstyler;
 import android.Manifest;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -37,12 +40,15 @@ public class MainActivity extends AppCompatActivity {
     // private fields
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int RESULT_LOAD_IMG = 2;
-    private final String loggerTag = "MainActivityLogger";
+    private final String loggerTag = "NeuralStylerLogger";
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        context = getApplicationContext();
+        // settings toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         // main image display
@@ -50,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         // load controls
         takePhotoButton = findViewById(R.id.takePhotoButton);
         loadPhotoButton = findViewById(R.id.loadPhotoButton);
-        stylizePhotoButton = findViewById(R.id.stylizePhotoButton);
+        stylizePhotoButton = findViewById(R.id.savePhotoButton);
         // set listeners
         takePhotoButton.setOnClickListener(takePhotoButtonOnClickListener);
         loadPhotoButton.setOnClickListener(loadPhotoButtonOnClickListener);
@@ -102,12 +108,37 @@ public class MainActivity extends AppCompatActivity {
         startCameraActivityForResult();
     };  // takePhotoButtonOnClickListener
 
+    /**
+     * Functions handling Android Gallery to select any picture
+     */
+    private void startGalleryActivityForResult() {
+        Intent selectPhotoIntent = new Intent(Intent.ACTION_PICK);
+        selectPhotoIntent.setType("image/*");
+
+        try {
+            Log.d(loggerTag, "Starting Gallery Activity");
+            startActivityForResult(selectPhotoIntent, RESULT_LOAD_IMG);
+        } catch (ActivityNotFoundException e) {
+            Log.e(loggerTag, "Error! Activity not found!" + e.toString());
+        }
+    }
+
+    final View.OnClickListener loadPhotoButtonOnClickListener = v -> {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            Log.d(loggerTag, "Permission not granted!");
+            requestPermissions(new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, 1);
+        }
+        startGalleryActivityForResult();
+    };  // loadPhotoButtonOnClickListener
+
+    /**
+     * handles actions on activity result
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-
-         // Loads image from captured with camera
+        // Loads image from captured with camera
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
             Log.d(loggerTag, "Image captured");
             Bitmap photo = (Bitmap) data.getExtras().get("data");
@@ -130,34 +161,29 @@ public class MainActivity extends AppCompatActivity {
             // display image on ImageView
             Bitmap photo = BitmapFactory.decodeStream(imageStream);
             inputImageView.setImageBitmap(photo);
+            Log.d(loggerTag, "Image displayed");
         }
     }  // onActivityResult
 
     /**
-     * Functions handling Android Gallery to select any picture
+     * Function starts NeuralStylerActivity
      */
-    private void startGalleryActivityForResult() {
-        Intent selectPhotoIntent = new Intent(Intent.ACTION_PICK);
-        selectPhotoIntent.setType("image/*");
-
-        try {
-            Log.d(loggerTag, "Starting Camera Activity");
-            startActivityForResult(selectPhotoIntent, RESULT_LOAD_IMG);
-        } catch (ActivityNotFoundException e) {
-            Log.e(loggerTag, "Error! Activity not found!" + e.toString());
-        }
-    }
-
-    final View.OnClickListener loadPhotoButtonOnClickListener = v -> {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            Log.d(loggerTag, "Permission not granted!");
-            requestPermissions(new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, 1);
-        }
-        startGalleryActivityForResult();
-    };  // loadPhotoButtonOnClickListener
-
     final View.OnClickListener stylizePhotoButtonOnClickListener = v -> {
-        // TODO: Launch GAN activity here
+        Intent neuralStylerIntent = new Intent(this, NeuralStylerActivity.class);
+
+        if (inputImageView.getDrawable() != null) {
+            Log.d(loggerTag, "Putting data into extras Bundle");
+            // TODO: Pass via URI, bitmap can crash
+            Bitmap image = ((BitmapDrawable) inputImageView.getDrawable()).getBitmap();
+            neuralStylerIntent.putExtra("image", image);
+
+            Log.d(loggerTag, "Starting NeuralStyler");
+            Log.d(loggerTag, image.toString());
+            startActivity(neuralStylerIntent);
+        } else {
+            Log.d(loggerTag, "Attempted starting NeuralStyler with empty image");
+            Toast.makeText(context, "Load Image First!", Toast.LENGTH_LONG).show();
+        }
     };  // stylizePhotoButtonOnClickListener
 
 }  // class

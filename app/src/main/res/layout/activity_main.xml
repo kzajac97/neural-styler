@@ -37,7 +37,7 @@
         android:adjustViewBounds="true"
         android:contentDescription="@string/input_image_description"
         android:scaleType="fitXY"
-        app:layout_constraintBottom_toTopOf="@+id/buttonsTableLayout"
+        app:layout_constraintBottom_toTopOf="@+id/controlsTableLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -45,7 +45,7 @@
         tools:src="" />
 
     <TableLayout
-        android:id="@+id/buttonsTableLayout"
+        android:id="@+id/controlsTableLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
@@ -73,7 +73,7 @@
             android:textSize="20sp" />
 
         <Button
-            android:id="@+id/stylizePhotoButton"
+            android:id="@+id/savePhotoButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="0dp"
