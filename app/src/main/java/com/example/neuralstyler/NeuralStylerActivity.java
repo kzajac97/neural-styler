@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -27,6 +28,13 @@ public class NeuralStylerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_neural_styler);
+
+        ActionBar actionBar = getSupportActionBar();
+
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayShowHomeEnabled(true);
+        }
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -64,11 +72,18 @@ public class NeuralStylerActivity extends AppCompatActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        if (item.getItemId() == R.id.action_settings) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_settings) {
             Log.d(loggerTag, "Entering settings");
             Intent enterSettingIntent = new Intent(this, SettingsActivity.class);
             startActivity(enterSettingIntent);
 
+            return true;
+        }
+
+        if (id == R.id.home) {
+            super.onBackPressed();
             return true;
         }
 
