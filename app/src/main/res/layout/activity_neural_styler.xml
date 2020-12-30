@@ -36,12 +36,39 @@
             android:adjustViewBounds="true"
             android:contentDescription="@string/input_image_description"
             android:scaleType="fitXY"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/controlsTableLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:layout_width="match_parent"
             tools:src="" />
+
+        <TableLayout
+            android:id="@+id/controlsTableLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <Spinner
+                android:id="@+id/styleSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:drawable/btn_dropdown"
+                android:spinnerMode="dropdown" />
+
+            <Button
+                android:id="@+id/stylizePhotoButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="0dp"
+                android:backgroundTint="@color/teal_700"
+                android:text="@string/save_image_button_label"
+                android:textSize="20sp" />
+        </TableLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
     <include layout="@layout/content_main" />

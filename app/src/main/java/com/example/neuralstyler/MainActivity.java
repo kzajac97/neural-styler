@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
@@ -156,8 +157,19 @@ public class MainActivity extends AppCompatActivity {
         startGalleryActivityForResult();
     };  // loadPhotoButtonOnClickListener
 
+    /**
+     * Function starts NeuralStylerActivity
+     */
     final View.OnClickListener stylizePhotoButtonOnClickListener = v -> {
-        // TODO: Launch GAN activity here
+        Intent neuralStylerIntent = new Intent(this, NeuralStylerActivity.class);
+
+        Log.d(loggerTag, "Putting data into extras Bundle");
+        Bundle extras = new Bundle();
+        extras.putParcelable("image", (Parcelable) inputImageView.getDrawable());
+        neuralStylerIntent.putExtras(extras);
+
+        Log.d(loggerTag, "Starting NeuralStyler");
+        startActivity(neuralStylerIntent);
     };  // stylizePhotoButtonOnClickListener
 
 }  // class
