@@ -1,6 +1,7 @@
 package com.example.neuralstyler;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -39,6 +40,16 @@ public class NeuralStylerActivity extends AppCompatActivity {
         stylizePhotoButton.setOnClickListener(stylizePhotoButtonOnClickListener);
 
         styleSelectorSpinner = findViewById(R.id.styleSelectorSpinner);
+
+        try {
+            Log.d(loggerTag, "Loading image from Bundle");
+            Intent startedWithIntent = getIntent();
+            Bitmap inputImage = startedWithIntent.getParcelableExtra("image");
+
+            inputImageView.setImageBitmap(inputImage);
+        } catch (Exception e) {
+            Log.e(loggerTag, "Error!" + e.toString());
+        }
     }
 
     @Override
