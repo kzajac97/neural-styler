@@ -14,6 +14,7 @@ import android.widget.Spinner;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.NavUtils;
 
 public class NeuralStylerActivity extends AppCompatActivity {
     // UI controls
@@ -29,15 +30,15 @@ public class NeuralStylerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_neural_styler);
 
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         ActionBar actionBar = getSupportActionBar();
 
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setDisplayShowHomeEnabled(true);
         }
-
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         inputImageView = findViewById(R.id.inputImageView);
 
@@ -83,7 +84,7 @@ public class NeuralStylerActivity extends AppCompatActivity {
         }
 
         if (id == R.id.home) {
-            super.onBackPressed();
+            NavUtils.navigateUpFromSameTask(this);
             return true;
         }
 
