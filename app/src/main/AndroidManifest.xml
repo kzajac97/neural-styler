@@ -13,7 +13,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.NeuralStyler">
-        <activity android:name=".StyleManagementActivity"></activity>
         <!-- MainActivity starting when app is launched -->
         <activity
             android:name=".MainActivity"
@@ -25,16 +24,25 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- Activity handling application settings -->
+        </activity>
+        <!-- Activity handling application settings -->
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
-        </activity> <!-- Activity handling application settings -->
+        </activity>
+        <!-- Activity handling application settings -->
         <activity
             android:name=".NeuralStylerActivity"
+            android:theme="@style/Theme.NeuralStyler.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+        <activity
+            android:name=".StyleManagementActivity"
             android:theme="@style/Theme.NeuralStyler.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
