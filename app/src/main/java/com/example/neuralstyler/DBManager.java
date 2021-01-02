@@ -8,6 +8,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DBManager extends SQLiteOpenHelper {
     // db info
     private static final String DB_NAME = "styles_database";
@@ -101,5 +104,29 @@ public class DBManager extends SQLiteOpenHelper {
         } finally {
             db.endTransaction();
         }
+    }
+
+    List<String> getAllPaintersNames() {
+        List<String> painters = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+        String dbQuery = "SELECT" + " " + KEY_PAINTER_NAME + " " + "FROM" + " " + TABLE_STYLES;
+
+        Cursor cursor = db.rawQuery(dbQuery, null);
+
+        try {
+            if(cursor.moveToFirst()) {
+                do {  // add all queried records to DB
+                    painters.add(cursor.getString(cursor.getColumnIndex(KEY_PAINTER_NAME)));
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            Log.e(loggerTag, "Error!" + e.toString());
+        } finally {  // clean-up cursor
+            if(cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+
+        return painters;
     }
 }

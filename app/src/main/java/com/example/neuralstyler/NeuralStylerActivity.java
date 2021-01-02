@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -23,6 +24,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NavUtils;
 import androidx.core.content.ContextCompat;
 
+import java.util.List;
+
 @RequiresApi(api = Build.VERSION_CODES.M)
 public class NeuralStylerActivity extends AppCompatActivity {
     // UI controls
@@ -32,6 +35,7 @@ public class NeuralStylerActivity extends AppCompatActivity {
     Spinner styleSelectorSpinner;
     // private variables
     private final String loggerTag = "NeuralStylerLogger";
+    private DBManager dbManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +52,8 @@ public class NeuralStylerActivity extends AppCompatActivity {
             actionBar.setDisplayShowHomeEnabled(true);
         }
 
+        dbManager = DBManager.getInstance(this);
+
         inputImageView = findViewById(R.id.inputImageView);
 
         savePhotoButton = findViewById(R.id.savePhotoButton);
@@ -57,6 +63,9 @@ public class NeuralStylerActivity extends AppCompatActivity {
         stylizePhotoButton.setOnClickListener(stylizePhotoButtonOnClickListener);
 
         styleSelectorSpinner = findViewById(R.id.styleSelectorSpinner);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, dbManager.getAllPaintersNames());
+        styleSelectorSpinner.setAdapter(adapter);
+
 
         try {
             Log.d(loggerTag, "Loading image from Bundle");
@@ -125,6 +134,6 @@ public class NeuralStylerActivity extends AppCompatActivity {
      *
      */
     final View.OnClickListener stylizePhotoButtonOnClickListener = v -> {
-        // TODO: Save saving image here
+        // TODO: Stylize image here
     };  // stylizePhotoButtonOnClickListener
 }
