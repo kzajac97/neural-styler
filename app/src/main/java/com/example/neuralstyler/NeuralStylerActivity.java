@@ -141,7 +141,7 @@ public class NeuralStylerActivity extends AppCompatActivity {
      *
      */
     final View.OnClickListener stylizePhotoButtonOnClickListener = v -> {
-        Bitmap b = dbManager.getImageForPainter("ItemItem");
+        Bitmap b = dbManager.getImageForPainter("Item");
         inputImageView.setImageBitmap(b);
     };  // stylizePhotoButtonOnClickListener
 }

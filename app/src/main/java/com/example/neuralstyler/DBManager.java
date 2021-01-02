@@ -144,15 +144,16 @@ public class DBManager extends SQLiteOpenHelper {
         byte[] queryResult = null;
 
         Log.d(loggerTag, "Running query");
-        // Cursor cursor = db.query(TABLE_STYLES, new String[]{KEY_SAMPLE_IMAGE}, KEY_SAMPLE_IMAGE + " = " + "'" + painterName + "'", null, null, null, null);
+        // TODO: Use WHERE clause
         Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_STYLES, null);
         Log.d(loggerTag, "Query successful");
 
         try {
             if(cursor.moveToFirst()) {
                 do {  // add all queried records to DB
-                    String result = cursor.getString(cursor.getColumnIndex(KEY_PAINTER_NAME));
-                    Log.d(loggerTag, result);
+                    Log.d(loggerTag, "Retrieving blob");
+                    String name = cursor.getString(cursor.getColumnIndex(KEY_PAINTER_NAME));
+                    Log.d(loggerTag, "Painter Name: " + name);
                     queryResult = cursor.getBlob(cursor.getColumnIndex(KEY_SAMPLE_IMAGE));
                     Log.d(loggerTag, Arrays.toString(queryResult));
                 } while (cursor.moveToNext());
