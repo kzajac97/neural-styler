@@ -34,7 +34,6 @@ public class NeuralStylerActivity extends AppCompatActivity {
     Spinner styleSelectorSpinner;
     // private variables
     private final String loggerTag = "NeuralStylerLogger";
-    private DBManager dbManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +50,7 @@ public class NeuralStylerActivity extends AppCompatActivity {
             actionBar.setDisplayShowHomeEnabled(true);
         }
 
-        dbManager = DBManager.getInstance(this);
+        DBManager dbManager = DBManager.getInstance(this);
 
         inputImageView = findViewById(R.id.inputImageView);
 

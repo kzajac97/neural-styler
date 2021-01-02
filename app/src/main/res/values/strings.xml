@@ -19,6 +19,7 @@
     <!-- Adding Styles Activity Labels -->
     <string name="choose_style_photo_label">Choose Photo</string>
     <string name="save_style_label">Save Style</string>
+    <string name="painter_name_hint">Enter painters name</string>
 
     <!-- Preference Titles -->
     <string name="theme_preference_title_label">Theme</string>
