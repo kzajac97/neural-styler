@@ -11,6 +11,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class DBManager extends SQLiteOpenHelper {
     // db info
     private static final String DB_NAME = "styles_database";

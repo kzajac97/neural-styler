@@ -24,7 +24,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NavUtils;
 import androidx.core.content.ContextCompat;
 
-import java.util.List;
 
 @RequiresApi(api = Build.VERSION_CODES.M)
 public class NeuralStylerActivity extends AppCompatActivity {
