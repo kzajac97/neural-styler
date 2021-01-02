@@ -33,6 +33,7 @@ public class NeuralStylerActivity extends AppCompatActivity {
     Button stylizePhotoButton;
     Spinner styleSelectorSpinner;
     // private variables
+    private DBManager dbManager;
     private final String loggerTag = "NeuralStylerLogger";
 
     @Override
@@ -50,7 +51,7 @@ public class NeuralStylerActivity extends AppCompatActivity {
             actionBar.setDisplayShowHomeEnabled(true);
         }
 
-        DBManager dbManager = DBManager.getInstance(this);
+        dbManager = DBManager.getInstance(this);
 
         inputImageView = findViewById(R.id.inputImageView);
 
@@ -140,6 +141,7 @@ public class NeuralStylerActivity extends AppCompatActivity {
      *
      */
     final View.OnClickListener stylizePhotoButtonOnClickListener = v -> {
-        // TODO: Stylize image here
+        Bitmap b = dbManager.getImageForPainter("ItemItem");
+        inputImageView.setImageBitmap(b);
     };  // stylizePhotoButtonOnClickListener
 }

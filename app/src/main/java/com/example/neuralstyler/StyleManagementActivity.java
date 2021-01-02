@@ -37,9 +37,9 @@ public class StyleManagementActivity extends AppCompatActivity {
     Button saveStyleButton;
     // private variables
     Bitmap loadedPhoto = null;
-    private static final int RESULT_LOAD_IMG = 2;  // 2 to unify result codes across app
-    private String loggerTag = "NeuralStyleLogger";
     private DBManager dbManager;
+    private static final int RESULT_LOAD_IMG = 2;  // 2 to unify result codes across app
+    private final String loggerTag = "NeuralStyleLogger";
     private Context context;
 
     @Override
@@ -125,10 +125,15 @@ public class StyleManagementActivity extends AppCompatActivity {
     }
 
     final View.OnClickListener saveStyleButtonOnClickListener = v -> {
-        Log.d(loggerTag, "Saving style to local database");
-
         if (!painterNameEditText.getText().toString().equals("") && loadedPhoto != null) {
-            // TODO: Save using DBManager
+            Log.d(loggerTag, "Saving new style to local database");
+
+            try {
+                Log.d(loggerTag, "Saving style with "+ painterNameEditText.getText().toString() + " " + loadedPhoto);
+                dbManager.addStyle(painterNameEditText.getText().toString(), loadedPhoto);
+            } catch(Exception e) {
+                Log.e(loggerTag, "DB Error!" + e.toString());
+            }
         } else {
             Log.v(loggerTag, "Name or style photo not set!");
             Toast.makeText(context, "Set style name and load photo!", Toast.LENGTH_LONG).show();

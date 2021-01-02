@@ -6,9 +6,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -71,6 +74,7 @@ public class DBManager extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if (oldVersion != newVersion) {
             Log.w(loggerTag, "SQL DB version do not match");
+            // TODO: Fix
             // db.execSQL("DROP TABLE IF EXISTS " + TABLE_POSTS);
             // db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
             onCreate(db);
@@ -96,7 +100,8 @@ public class DBManager extends SQLiteOpenHelper {
             ContentValues values = new ContentValues();
 
             values.put(KEY_PAINTER_NAME, painterName);
-            // TODO: Add image here
+            values.put(KEY_SAMPLE_IMAGE, compressBitmap(sampleImage));
+            Log.d(loggerTag, "Putting data to DB: " + painterName + Arrays.toString(compressBitmap(sampleImage)));
 
             db.insertOrThrow(TABLE_STYLES, null, values);
             db.setTransactionSuccessful();
@@ -104,13 +109,16 @@ public class DBManager extends SQLiteOpenHelper {
             Log.e(loggerTag, "Error!" + e.toString());
         } finally {
             db.endTransaction();
+            Log.d(loggerTag, "Transaction successful!");
         }
     }
 
-    List<String> getAllPaintersNames() {
+    public List<String> getAllPaintersNames() {
         List<String> painters = new ArrayList<>();
         SQLiteDatabase db = getReadableDatabase();
+        // TODO: Do not use raw query!
         String dbQuery = "SELECT" + " " + KEY_PAINTER_NAME + " " + "FROM" + " " + TABLE_STYLES;
+        Log.d(loggerTag, "Querying with: " + dbQuery);
 
         Cursor cursor = db.rawQuery(dbQuery, null);
 
@@ -121,7 +129,7 @@ public class DBManager extends SQLiteOpenHelper {
                 } while (cursor.moveToNext());
             }
         } catch (Exception e) {
-            Log.e(loggerTag, "Error!" + e.toString());
+            Log.e(loggerTag, "DB Error! " + e.toString());
         } finally {  // clean-up cursor
             if(cursor != null && !cursor.isClosed()) {
                 cursor.close();
@@ -129,5 +137,40 @@ public class DBManager extends SQLiteOpenHelper {
         }
 
         return painters;
+    }
+
+    public Bitmap getImageForPainter(String painterName) {
+        SQLiteDatabase db = getReadableDatabase();
+        byte[] queryResult = null;
+
+        Log.d(loggerTag, "Running query");
+        // Cursor cursor = db.query(TABLE_STYLES, new String[]{KEY_SAMPLE_IMAGE}, KEY_SAMPLE_IMAGE + " = " + "'" + painterName + "'", null, null, null, null);
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_STYLES, null);
+        Log.d(loggerTag, "Query successful");
+
+        try {
+            if(cursor.moveToFirst()) {
+                do {  // add all queried records to DB
+                    String result = cursor.getString(cursor.getColumnIndex(KEY_PAINTER_NAME));
+                    Log.d(loggerTag, result);
+                    queryResult = cursor.getBlob(cursor.getColumnIndex(KEY_SAMPLE_IMAGE));
+                    Log.d(loggerTag, Arrays.toString(queryResult));
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            Log.e(loggerTag, "DB Error! " + e.toString());
+        } finally {
+            if(cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+
+        return BitmapFactory.decodeByteArray(queryResult, 0, queryResult.length);
+    }
+
+    private byte[] compressBitmap(Bitmap photo) {
+        ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
+        photo.compress(Bitmap.CompressFormat.PNG, 100, byteOutputStream);
+        return byteOutputStream.toByteArray();
     }
 }
