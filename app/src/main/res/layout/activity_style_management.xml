@@ -6,45 +6,37 @@
     android:layout_height="match_parent"
     tools:context=".StyleManagementActivity">
 
-    <?xml version="1.0" encoding="utf-8"?>
-    <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <TableLayout
+        android:id="@+id/controlsTableLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
-        <TableLayout
-            android:id="@+id/controlsTableLayout"
+        <EditText
+            android:id="@+id/painterNameEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/chooseStylePhoto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+            android:layout_marginBottom="0dp"
+            android:backgroundTint="@color/teal_700"
+            android:text="@string/choose_style_photo_label"
+            android:textSize="20sp" />
 
-            <EditText
-                android:id="@+id/painterNameEditText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <Button
-                android:id="@+id/chooseStylePhoto"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="0dp"
-                android:backgroundTint="@color/teal_700"
-                android:text="@string/choose_style_photo_label"
-                android:textSize="20sp" />
-
-            <Button
-                android:id="@+id/saveStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="0dp"
-                android:backgroundTint="@color/teal_700"
-                android:text="@string/save_style_label"
-                android:textSize="20sp" />
-        </TableLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
+        <Button
+            android:id="@+id/saveStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="0dp"
+            android:backgroundTint="@color/teal_700"
+            android:text="@string/save_style_label"
+            android:textSize="20sp" />
+    </TableLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

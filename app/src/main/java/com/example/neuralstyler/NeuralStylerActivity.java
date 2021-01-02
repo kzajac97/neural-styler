@@ -95,6 +95,14 @@ public class NeuralStylerActivity extends AppCompatActivity {
             return true;
         }
 
+        if (id == R.id.action_add_style) {  // add style button
+            Log.d(loggerTag, "Entering StyleManagementActivity");
+            Intent enterStyleManagementIntent = new Intent(this, StyleManagementActivity.class);
+            startActivity(enterStyleManagementIntent);
+
+            return true;
+        }
+
         if (id == R.id.home) {  // Back button
             NavUtils.navigateUpFromSameTask(this);
             return true;

@@ -70,15 +70,29 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Handle action bar item clicks here. The action bar will
+     * automatically handle clicks on the Home/Up button, so long
+     * as you specify a parent activity in AndroidManifest.xml.
+     *
+     * @param item Menu item clicked-on
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        if (item.getItemId() == R.id.action_settings) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_settings) {
             Log.d(loggerTag, "Entering settings");
             Intent enterSettingIntent = new Intent(this, SettingsActivity.class);
             startActivity(enterSettingIntent);
+
+            return true;
+        }
+
+        if (id == R.id.action_add_style) {
+            Log.d(loggerTag, "Entering StyleManagementActivity");
+            Intent enterStyleManagementIntent = new Intent(this, StyleManagementActivity.class);
+            startActivity(enterStyleManagementIntent);
 
             return true;
         }
