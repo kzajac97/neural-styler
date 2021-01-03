@@ -83,7 +83,6 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
-            Log.d(loggerTag, "Entering settings");
             Intent enterSettingIntent = new Intent(this, SettingsActivity.class);
             startActivity(enterSettingIntent);
 
@@ -91,7 +90,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (id == R.id.action_add_style) {
-            Log.d(loggerTag, "Entering StyleManagementActivity");
             Intent enterStyleManagementIntent = new Intent(this, StyleManagementActivity.class);
             startActivity(enterStyleManagementIntent);
 
@@ -108,7 +106,6 @@ public class MainActivity extends AppCompatActivity {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
         try {
-            Log.d(loggerTag, "Starting Camera Activity");
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         } catch (ActivityNotFoundException e) {
             Log.e(loggerTag, "Error! Activity not found!" + e.toString());
@@ -120,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
      */
     final View.OnClickListener takePhotoButtonOnClickListener = v -> {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            Log.d(loggerTag, "Permission not granted!");
+            Log.w(loggerTag, "Permission not granted!");
             requestPermissions(new String[]{Manifest.permission.CAMERA}, 1);
         }
         startCameraActivityForResult();
@@ -134,7 +131,6 @@ public class MainActivity extends AppCompatActivity {
         selectPhotoIntent.setType("image/*");
 
         try {
-            Log.d(loggerTag, "Starting Gallery Activity");
             startActivityForResult(selectPhotoIntent, RESULT_LOAD_IMG);
         } catch (ActivityNotFoundException e) {
             Log.e(loggerTag, "Error! Activity not found!" + e.toString());
@@ -146,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
      */
     final View.OnClickListener loadPhotoButtonOnClickListener = v -> {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            Log.d(loggerTag, "Permission not granted!");
+            Log.w(loggerTag, "Permission not granted!");
             requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
         }
         startGalleryActivityForResult();
@@ -158,10 +154,8 @@ public class MainActivity extends AppCompatActivity {
      * @param data Camera Intent with captured photo as extras
      */
     final void onCameraResult(Intent data) {
-        Log.d(loggerTag, "Image captured");
         Bitmap photo = (Bitmap) data.getExtras().get("data");
         inputImageView.setImageBitmap(photo);
-        Log.d(loggerTag, "Image displayed");
     }
 
     /**
@@ -170,10 +164,9 @@ public class MainActivity extends AppCompatActivity {
      * @param data Gallery Intent with chosen photo as extras
      */
     final void onGalleryResult(Intent data) {
-        Log.d(loggerTag, "Image loaded");
-
         Uri imageUri = data.getData();
         InputStream imageStream = null;
+
         try {  // try load image from stream
             imageStream = getContentResolver().openInputStream(imageUri);
         } catch (FileNotFoundException e) {
@@ -182,7 +175,6 @@ public class MainActivity extends AppCompatActivity {
 
         Bitmap photo = BitmapFactory.decodeStream(imageStream);
         inputImageView.setImageBitmap(photo);
-        Log.d(loggerTag, "Image displayed");
     }
 
     /**
@@ -208,18 +200,12 @@ public class MainActivity extends AppCompatActivity {
         Intent neuralStylerIntent = new Intent(this, NeuralStylerActivity.class);
 
         if (inputImageView.getDrawable() != null) {
-            Log.d(loggerTag, "Putting data into extras Bundle");
-
-            // Bitmap image = ((BitmapDrawable) inputImageView.getDrawable()).getBitmap();
             Bitmap photo = Utils.getBitmapFromImageView(inputImageView);
             String fileName = savePhotoToFile(photo);
             neuralStylerIntent.putExtra("image", fileName);
 
-            Log.d(loggerTag, "Starting NeuralStyler");
-            Log.d(loggerTag, "Passing photo via file: " + fileName);
             startActivity(neuralStylerIntent);
         } else {
-            Log.d(loggerTag, "Attempted starting NeuralStyler with empty image");
             Toast.makeText(context, "Load Image First!", Toast.LENGTH_LONG).show();
         }
     };  // stylizePhotoButtonOnClickListener

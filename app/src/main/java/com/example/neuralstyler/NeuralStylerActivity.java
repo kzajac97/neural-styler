@@ -68,7 +68,6 @@ public class NeuralStylerActivity extends AppCompatActivity {
         styleSelectorSpinner.setAdapter(adapter);
 
         try {  // loading image from MainActivity
-            Log.d(loggerTag, "Loading image from Bundle");
             Intent startedWithIntent = getIntent();
 
             FileInputStream inputStream = this.openFileInput(startedWithIntent.getStringExtra("image"));
@@ -91,7 +90,6 @@ public class NeuralStylerActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {  // settings button
-            Log.d(loggerTag, "Entering settings");
             Intent enterSettingIntent = new Intent(this, SettingsActivity.class);
             startActivity(enterSettingIntent);
 
@@ -99,7 +97,6 @@ public class NeuralStylerActivity extends AppCompatActivity {
         }
 
         if (id == R.id.action_add_style) {  // add style button
-            Log.d(loggerTag, "Entering StyleManagementActivity");
             Intent enterStyleManagementIntent = new Intent(this, StyleManagementActivity.class);
             startActivity(enterStyleManagementIntent);
 
@@ -119,7 +116,7 @@ public class NeuralStylerActivity extends AppCompatActivity {
      */
     final View.OnClickListener savePhotoButtonOnClickListener = v -> {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            Log.d(loggerTag, "Permission not granted!");
+            Log.w(loggerTag, "Permission not granted!");
             requestPermissions(new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE }, 1);
         }
         saveImageToGallery(((BitmapDrawable) inputImageView.getDrawable()).getBitmap());
@@ -131,7 +128,6 @@ public class NeuralStylerActivity extends AppCompatActivity {
      * @param image Bitmap object with generated image
      */
     final void saveImageToGallery(Bitmap image) {
-        Log.d(loggerTag, "Saving image:" + image.toString());
         MediaStore.Images.Media.insertImage(
                 getContentResolver(),
                 image,
