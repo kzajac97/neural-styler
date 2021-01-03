@@ -34,6 +34,7 @@ public class StyleManagementActivity extends AppCompatActivity {
     EditText painterNameEditText;
     Button chooseStylePhoto;
     Button saveStyleButton;
+    Button clearStylesButton;
 
     Bitmap loadedPhoto = null;
     private DBManager dbManager;
@@ -66,6 +67,9 @@ public class StyleManagementActivity extends AppCompatActivity {
 
         saveStyleButton = findViewById(R.id.saveStyle);
         saveStyleButton.setOnClickListener(saveStyleButtonOnClickListener);
+
+        clearStylesButton = findViewById(R.id.clearStyles);
+        clearStylesButton.setOnClickListener(clearStylesButtonOnClickListener);
     }
 
     @Override
@@ -164,4 +168,13 @@ public class StyleManagementActivity extends AppCompatActivity {
             Toast.makeText(context, "Set style name and load photo!", Toast.LENGTH_LONG).show();
         }
     };  // saveStyleButtonOnClickListener
+
+
+    /**
+     * Handles operations when clicking on clearStylesButton
+     */
+    final View.OnClickListener clearStylesButtonOnClickListener = v -> {
+        dbManager.clearRecords();
+        Toast.makeText(context, "All styles cleared!", Toast.LENGTH_LONG).show();
+    };  // clearStylesButtonOnClickListener
 }

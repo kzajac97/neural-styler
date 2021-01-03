@@ -183,4 +183,15 @@ public class DBManager extends SQLiteOpenHelper {
 
         return Utils.decompressBitmap(queryResult);
     }
+
+    /**
+     * Clears all records from DB
+     * Does not drop the tables, only clears records
+     */
+    public void clearRecords() {
+        SQLiteDatabase db = getWritableDatabase();
+
+        db.delete(TABLE_STYLES, null, null);
+        db.close();
+    }
 }
