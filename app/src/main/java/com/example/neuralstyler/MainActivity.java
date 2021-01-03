@@ -34,16 +34,11 @@ import java.io.InputStream;
 
 @RequiresApi(api = Build.VERSION_CODES.M)
 public class MainActivity extends AppCompatActivity {
-    /**
-     * UI Controls in MainActivity
-     */
     ImageView inputImageView;
     Button takePhotoButton;
     Button loadPhotoButton;
     Button stylizePhotoButton;
-    /**
-     * private variables and fields
-     */
+
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int RESULT_LOAD_IMG = 2;
     private final String loggerTag = "NeuralStylerLogger";
@@ -215,8 +210,9 @@ public class MainActivity extends AppCompatActivity {
         if (inputImageView.getDrawable() != null) {
             Log.d(loggerTag, "Putting data into extras Bundle");
 
-            Bitmap image = ((BitmapDrawable) inputImageView.getDrawable()).getBitmap();
-            String fileName = savePhotoToFile(image);
+            // Bitmap image = ((BitmapDrawable) inputImageView.getDrawable()).getBitmap();
+            Bitmap photo = Utils.getBitmapFromImageView(inputImageView);
+            String fileName = savePhotoToFile(photo);
             neuralStylerIntent.putExtra("image", fileName);
 
             Log.d(loggerTag, "Starting NeuralStyler");

@@ -30,12 +30,11 @@ import java.io.FileInputStream;
 
 @RequiresApi(api = Build.VERSION_CODES.M)
 public class NeuralStylerActivity extends AppCompatActivity {
-    // UI controls
     ImageView inputImageView;
     Button savePhotoButton;
     Button stylizePhotoButton;
     Spinner styleSelectorSpinner;
-    // private variables
+
     private DBManager dbManager;
     private final String loggerTag = "NeuralStylerLogger";
 
@@ -68,7 +67,7 @@ public class NeuralStylerActivity extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, dbManager.getAllPaintersNames());
         styleSelectorSpinner.setAdapter(adapter);
 
-        try {
+        try {  // loading image from MainActivity
             Log.d(loggerTag, "Loading image from Bundle");
             Intent startedWithIntent = getIntent();
 

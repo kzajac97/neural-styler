@@ -6,12 +6,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.util.Log;
 
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -91,25 +88,31 @@ public class DBManager extends SQLiteOpenHelper {
         db.setForeignKeyConstraintsEnabled(true);
     }
 
+    /**
+     * Add new artistic style to DB
+     *
+     * @param painterName unique name for given painter
+     * @param sampleImage style photo used by styles across application
+     */
     public void addStyle(String painterName, Bitmap sampleImage) {
         Log.d(loggerTag, "Adding style to DB");
 
         SQLiteDatabase db = getWritableDatabase();
         db.beginTransaction();  // wrap operations with transaction
+
         try {
             ContentValues values = new ContentValues();
 
             values.put(KEY_PAINTER_NAME, painterName);
-            values.put(KEY_SAMPLE_IMAGE, compressBitmap(sampleImage));
-            Log.d(loggerTag, "Putting data to DB: " + painterName + Arrays.toString(compressBitmap(sampleImage)));
+            values.put(KEY_SAMPLE_IMAGE, Utils.compressBitmap(sampleImage));
 
             db.insertOrThrow(TABLE_STYLES, null, values);
             db.setTransactionSuccessful();
+            Log.d(loggerTag, "Transaction successful!");
         } catch(Exception e) {
             Log.e(loggerTag, "Error!" + e.toString());
         } finally {
             db.endTransaction();
-            Log.d(loggerTag, "Transaction successful!");
         }
     }
 
@@ -143,9 +146,7 @@ public class DBManager extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         byte[] queryResult = null;
 
-        Log.d(loggerTag, "Running query");
         Cursor cursor = db.query(TABLE_STYLES, new String[]{ KEY_SAMPLE_IMAGE }, KEY_PAINTER_NAME + "=?", new String[]{ painterName }, null, null, null);
-        Log.d(loggerTag, "Query successful");
 
         try {
             if(cursor.moveToFirst()) {
@@ -161,31 +162,6 @@ public class DBManager extends SQLiteOpenHelper {
             }
         }
 
-        return decompressBitmap(queryResult);
-    }
-
-    /**
-     * Compresses bitmap to be saved into DB
-     *
-     * @param photo Bitmap with photo content
-     *
-     * @return bytes array with compressed photo
-     */
-    private byte[] compressBitmap(Bitmap photo) {
-        ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
-        photo.compress(Bitmap.CompressFormat.PNG, 100, byteOutputStream);
-
-        return byteOutputStream.toByteArray();
-    }
-
-    /**
-     * Decompresses Bitmap loaded from DB as byte array
-     *
-     * @param compressed compressed Bitmap
-     *
-     * @return decompressed displayable Bitmap
-     */
-    private Bitmap decompressBitmap(byte[] compressed) {
-        return BitmapFactory.decodeByteArray(compressed, 0, compressed.length);
+        return Utils.decompressBitmap(queryResult);
     }
 }

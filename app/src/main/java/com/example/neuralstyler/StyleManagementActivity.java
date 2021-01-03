@@ -31,11 +31,10 @@ import java.io.InputStream;
 
 @RequiresApi(api = Build.VERSION_CODES.M)
 public class StyleManagementActivity extends AppCompatActivity {
-
     EditText painterNameEditText;
     Button chooseStylePhoto;
     Button saveStyleButton;
-    // private variables
+
     Bitmap loadedPhoto = null;
     private DBManager dbManager;
     private static final int RESULT_LOAD_IMG = 2;  // 2 to unify result codes across app
@@ -98,49 +97,70 @@ public class StyleManagementActivity extends AppCompatActivity {
 
     final View.OnClickListener chooseStylePhotoOnClickListener = v -> {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            Log.d(loggerTag, "Permission not granted!");
+            Log.w(loggerTag, "Permission not granted!");
             requestPermissions(new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, 1);
         }
         startGalleryActivityForResult();
     };  // chooseStylePhotoOnClickListener
 
+    /**
+     * Handles actions on Gallery Activity result
+     *
+     * @param data Gallery Intent with chosen photo as extras
+     */
+    final void onGalleryResult(Intent data) {
+        Uri imageUri = data.getData();
+        InputStream imageStream = null;
+
+        try {  // try load image from stream
+            imageStream = getContentResolver().openInputStream(imageUri);
+        } catch (FileNotFoundException e) {
+            Log.e(loggerTag, "Error!" + e.toString());
+        }
+
+        loadedPhoto = BitmapFactory.decodeStream(imageStream);
+    }
+
+    /**
+     * Handles operations onActivityResult for Activities started from within this Activity
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        // Displays image from gallery
+
         if (requestCode == RESULT_LOAD_IMG && resultCode == Activity.RESULT_OK) {
-            Log.d(loggerTag, "Image loaded");
-            // helper variables
-            Uri imageUri = data.getData();
-            InputStream imageStream = null;
-            // try load image from stream
-            try {
-                imageStream = getContentResolver().openInputStream(imageUri);
-            } catch (FileNotFoundException e) {
-                Log.e(loggerTag, "Error!" + e.toString());
-            }
-            // display image on ImageView
-            loadedPhoto = BitmapFactory.decodeStream(imageStream);
+            onGalleryResult(data);
         }
     }
 
+    /**
+     * Saves style to DB using dbManager
+     *
+     * @param painterName given painter name
+     * @param stylePhoto loaded style image
+     */
+    final void saveStyle(String painterName, Bitmap stylePhoto) {
+        if(dbManager.getAllPaintersNames().contains(painterName)) {  // check if name is already in DB
+            Toast.makeText(context, "Name already used!", Toast.LENGTH_LONG).show();
+        } else {
+            try {
+                dbManager.addStyle(painterName, stylePhoto);
+                Toast.makeText(context, "Style added!", Toast.LENGTH_LONG).show();
+            } catch(Exception e) {
+                Log.e(loggerTag, "DB Error!" + e.toString());
+            }
+        }
+    }  // addStyle
+
+    /**
+     * Handles operations when clicking on saveStyleButton
+     */
     final View.OnClickListener saveStyleButtonOnClickListener = v -> {
         String painterName = painterNameEditText.getText().toString();
-        if (!painterName.equals("") && loadedPhoto != null) {  // check if name is already in DB
-            if(dbManager.getAllPaintersNames().contains(painterName)) {
-                Log.v(loggerTag, "Name already used!");
-                Toast.makeText(context, "Name already used!", Toast.LENGTH_LONG).show();
-            } else {
-                Log.d(loggerTag, "Saving new style to local database");
-                try {
-                    Log.d(loggerTag, "Saving style with " + painterName + " " + loadedPhoto);
-                    dbManager.addStyle(painterName, loadedPhoto);
-                } catch(Exception e) {
-                    Log.e(loggerTag, "DB Error!" + e.toString());
-                }
-            }
+
+        if (!painterName.equals("") && loadedPhoto != null) {
+            saveStyle(painterName, loadedPhoto);
         } else {
-            Log.v(loggerTag, "Name or style photo not set!");
             Toast.makeText(context, "Set style name and load photo!", Toast.LENGTH_LONG).show();
         }
     };  // saveStyleButtonOnClickListener
