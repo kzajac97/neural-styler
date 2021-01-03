@@ -27,6 +27,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 
@@ -187,17 +189,32 @@ public class MainActivity extends AppCompatActivity {
 
         if (inputImageView.getDrawable() != null) {
             Log.d(loggerTag, "Putting data into extras Bundle");
-            // TODO: Pass via URI, bitmap can crash
             Bitmap image = ((BitmapDrawable) inputImageView.getDrawable()).getBitmap();
-            neuralStylerIntent.putExtra("image", image);
+            String fileName = savePhotoToFile(image);
+            neuralStylerIntent.putExtra("image", fileName);
 
             Log.d(loggerTag, "Starting NeuralStyler");
-            Log.d(loggerTag, image.toString());
+            Log.d(loggerTag, "Passing photo via file: " + fileName);
             startActivity(neuralStylerIntent);
         } else {
             Log.d(loggerTag, "Attempted starting NeuralStyler with empty image");
             Toast.makeText(context, "Load Image First!", Toast.LENGTH_LONG).show();
         }
     };  // stylizePhotoButtonOnClickListener
+
+
+    final String savePhotoToFile(Bitmap photo) {
+        final String fileName = "extrasBitmap.png";
+        try {
+            FileOutputStream fileStream = this.openFileOutput(fileName, Context.MODE_PRIVATE);
+            photo.compress(Bitmap.CompressFormat.PNG, 100, fileStream);
+            // Clean-up
+            fileStream.close();
+        } catch (IOException e) {
+            Log.e(loggerTag, "Error!" + e.toString());
+        }
+
+        return fileName;
+    }
 
 }  // class

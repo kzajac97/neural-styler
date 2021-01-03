@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,6 +24,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NavUtils;
 import androidx.core.content.ContextCompat;
+
+import java.io.FileInputStream;
 
 
 @RequiresApi(api = Build.VERSION_CODES.M)
@@ -65,11 +68,12 @@ public class NeuralStylerActivity extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, dbManager.getAllPaintersNames());
         styleSelectorSpinner.setAdapter(adapter);
 
-
         try {
             Log.d(loggerTag, "Loading image from Bundle");
             Intent startedWithIntent = getIntent();
-            Bitmap inputImage = startedWithIntent.getParcelableExtra("image");
+
+            FileInputStream inputStream = this.openFileInput(startedWithIntent.getStringExtra("image"));
+            Bitmap inputImage = BitmapFactory.decodeStream(inputStream);
 
             inputImageView.setImageBitmap(inputImage);
         } catch (Exception e) {
