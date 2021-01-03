@@ -144,18 +144,13 @@ public class DBManager extends SQLiteOpenHelper {
         byte[] queryResult = null;
 
         Log.d(loggerTag, "Running query");
-        // TODO: Use WHERE clause
-        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_STYLES, null);
+        Cursor cursor = db.query(TABLE_STYLES, new String[]{ KEY_SAMPLE_IMAGE }, KEY_PAINTER_NAME + "=?", new String[]{ painterName }, null, null, null);
         Log.d(loggerTag, "Query successful");
 
         try {
             if(cursor.moveToFirst()) {
                 do {  // add all queried records to DB
-                    Log.d(loggerTag, "Retrieving blob");
-                    String name = cursor.getString(cursor.getColumnIndex(KEY_PAINTER_NAME));
-                    Log.d(loggerTag, "Painter Name: " + name);
                     queryResult = cursor.getBlob(cursor.getColumnIndex(KEY_SAMPLE_IMAGE));
-                    Log.d(loggerTag, Arrays.toString(queryResult));
                 } while (cursor.moveToNext());
             }
         } catch (Exception e) {
@@ -166,12 +161,31 @@ public class DBManager extends SQLiteOpenHelper {
             }
         }
 
-        return BitmapFactory.decodeByteArray(queryResult, 0, queryResult.length);
+        return decompressBitmap(queryResult);
     }
 
+    /**
+     * Compresses bitmap to be saved into DB
+     *
+     * @param photo Bitmap with photo content
+     *
+     * @return bytes array with compressed photo
+     */
     private byte[] compressBitmap(Bitmap photo) {
         ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
         photo.compress(Bitmap.CompressFormat.PNG, 100, byteOutputStream);
+
         return byteOutputStream.toByteArray();
+    }
+
+    /**
+     * Decompresses Bitmap loaded from DB as byte array
+     *
+     * @param compressed compressed Bitmap
+     *
+     * @return decompressed displayable Bitmap
+     */
+    private Bitmap decompressBitmap(byte[] compressed) {
+        return BitmapFactory.decodeByteArray(compressed, 0, compressed.length);
     }
 }
