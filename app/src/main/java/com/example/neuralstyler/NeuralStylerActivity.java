@@ -1,6 +1,7 @@
 package com.example.neuralstyler;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -17,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
@@ -37,6 +39,7 @@ public class NeuralStylerActivity extends AppCompatActivity {
 
     private DBManager dbManager;
     private final String loggerTag = "NeuralStylerLogger";
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +57,7 @@ public class NeuralStylerActivity extends AppCompatActivity {
         }
 
         dbManager = DBManager.getInstance(this);
+        context = getApplicationContext();
 
         inputImageView = findViewById(R.id.inputImageView);
 
@@ -129,11 +133,13 @@ public class NeuralStylerActivity extends AppCompatActivity {
      */
     final void saveImageToGallery(Bitmap image) {
         MediaStore.Images.Media.insertImage(
-                getContentResolver(),
-                image,
-                "NeuralStyleImage",
-                "Image Generated with Neural Style Transfer algorithm."
+            getContentResolver(),
+            image,
+            "NeuralStyleImage",
+            "Image Generated with Neural Style Transfer algorithm."
         );
+
+        Toast.makeText(context, "Image saved!", Toast.LENGTH_LONG).show();
     }
 
     /**

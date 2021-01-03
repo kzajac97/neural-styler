@@ -66,14 +66,14 @@ public class DBManager extends SQLiteOpenHelper {
 
     /**
      * Called when DB with this name already exists, but has different version
+     * Drops current tables and recreates them
      */
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if (oldVersion != newVersion) {
             Log.w(loggerTag, "SQL DB version do not match");
-            // TODO: Fix
-            // db.execSQL("DROP TABLE IF EXISTS " + TABLE_POSTS);
-            // db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
+
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_STYLES);
             onCreate(db);
         }
     }
@@ -89,6 +89,23 @@ public class DBManager extends SQLiteOpenHelper {
     }
 
     /**
+     * Packs input data into ContentValues object
+     *
+     * @param painterName unique name for given painter
+     * @param sampleImage style photo used by styles across application
+     *
+     * @return data packed into ContentValues object
+     */
+    private ContentValues packValues(String painterName, Bitmap sampleImage) {
+        ContentValues values = new ContentValues();
+
+        values.put(KEY_PAINTER_NAME, painterName);
+        values.put(KEY_SAMPLE_IMAGE, Utils.compressBitmap(sampleImage));
+
+        return values;
+    }
+
+    /**
      * Add new artistic style to DB
      *
      * @param painterName unique name for given painter
@@ -101,12 +118,7 @@ public class DBManager extends SQLiteOpenHelper {
         db.beginTransaction();  // wrap operations with transaction
 
         try {
-            ContentValues values = new ContentValues();
-
-            values.put(KEY_PAINTER_NAME, painterName);
-            values.put(KEY_SAMPLE_IMAGE, Utils.compressBitmap(sampleImage));
-
-            db.insertOrThrow(TABLE_STYLES, null, values);
+            db.insertOrThrow(TABLE_STYLES, null, packValues(painterName, sampleImage));
             db.setTransactionSuccessful();
             Log.d(loggerTag, "Transaction successful!");
         } catch(Exception e) {
@@ -116,14 +128,15 @@ public class DBManager extends SQLiteOpenHelper {
         }
     }
 
+    /**
+     * Runs Query to DB to retrieve all stored painters
+     *
+     * @return all painter names on java list
+     */
     public List<String> getAllPaintersNames() {
         List<String> painters = new ArrayList<>();
         SQLiteDatabase db = getReadableDatabase();
-        // TODO: Do not use raw query!
-        String dbQuery = "SELECT" + " " + KEY_PAINTER_NAME + " " + "FROM" + " " + TABLE_STYLES;
-        Log.d(loggerTag, "Querying with: " + dbQuery);
-
-        Cursor cursor = db.rawQuery(dbQuery, null);
+        Cursor cursor = db.query(TABLE_STYLES, new String[]{ KEY_PAINTER_NAME }, null, null, null, null, null);
 
         try {
             if(cursor.moveToFirst()) {
@@ -142,10 +155,16 @@ public class DBManager extends SQLiteOpenHelper {
         return painters;
     }
 
+    /**
+     * Runs query to select image corresponding to chosen painter name in DB
+     *
+     * @param painterName painter name to load image for
+     *
+     * @return Bitmap containing image loaded and decompressed from DB
+     */
     public Bitmap getImageForPainter(String painterName) {
-        SQLiteDatabase db = getReadableDatabase();
         byte[] queryResult = null;
-
+        SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.query(TABLE_STYLES, new String[]{ KEY_SAMPLE_IMAGE }, KEY_PAINTER_NAME + "=?", new String[]{ painterName }, null, null, null);
 
         try {
