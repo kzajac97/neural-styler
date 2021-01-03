@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -23,6 +25,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NavUtils;
 import androidx.core.content.ContextCompat;
 
+import java.io.FileInputStream;
+
+
 @RequiresApi(api = Build.VERSION_CODES.M)
 public class NeuralStylerActivity extends AppCompatActivity {
     // UI controls
@@ -31,6 +36,7 @@ public class NeuralStylerActivity extends AppCompatActivity {
     Button stylizePhotoButton;
     Spinner styleSelectorSpinner;
     // private variables
+    private DBManager dbManager;
     private final String loggerTag = "NeuralStylerLogger";
 
     @Override
@@ -48,6 +54,8 @@ public class NeuralStylerActivity extends AppCompatActivity {
             actionBar.setDisplayShowHomeEnabled(true);
         }
 
+        dbManager = DBManager.getInstance(this);
+
         inputImageView = findViewById(R.id.inputImageView);
 
         savePhotoButton = findViewById(R.id.savePhotoButton);
@@ -57,11 +65,15 @@ public class NeuralStylerActivity extends AppCompatActivity {
         stylizePhotoButton.setOnClickListener(stylizePhotoButtonOnClickListener);
 
         styleSelectorSpinner = findViewById(R.id.styleSelectorSpinner);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, dbManager.getAllPaintersNames());
+        styleSelectorSpinner.setAdapter(adapter);
 
         try {
             Log.d(loggerTag, "Loading image from Bundle");
             Intent startedWithIntent = getIntent();
-            Bitmap inputImage = startedWithIntent.getParcelableExtra("image");
+
+            FileInputStream inputStream = this.openFileInput(startedWithIntent.getStringExtra("image"));
+            Bitmap inputImage = BitmapFactory.decodeStream(inputStream);
 
             inputImageView.setImageBitmap(inputImage);
         } catch (Exception e) {
@@ -83,6 +95,14 @@ public class NeuralStylerActivity extends AppCompatActivity {
             Log.d(loggerTag, "Entering settings");
             Intent enterSettingIntent = new Intent(this, SettingsActivity.class);
             startActivity(enterSettingIntent);
+
+            return true;
+        }
+
+        if (id == R.id.action_add_style) {  // add style button
+            Log.d(loggerTag, "Entering StyleManagementActivity");
+            Intent enterStyleManagementIntent = new Intent(this, StyleManagementActivity.class);
+            startActivity(enterStyleManagementIntent);
 
             return true;
         }
@@ -125,6 +145,8 @@ public class NeuralStylerActivity extends AppCompatActivity {
      *
      */
     final View.OnClickListener stylizePhotoButtonOnClickListener = v -> {
-        // TODO: Save saving image here
+        // TODO: TFLite model launched here
+        Bitmap b = dbManager.getImageForPainter("Item");
+        inputImageView.setImageBitmap(b);
     };  // stylizePhotoButtonOnClickListener
 }

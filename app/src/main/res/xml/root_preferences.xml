@@ -1,4 +1,5 @@
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory app:title="@string/theme_preference_title_label">
 
@@ -12,10 +13,6 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="Add Style">
-        <!-- Fill in with adding painter style to DB -->
-
-    </PreferenceCategory>
     <!--
     <PreferenceCategory app:title="@string/sync_header">
 

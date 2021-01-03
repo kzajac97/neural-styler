@@ -27,6 +27,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 
@@ -70,15 +72,29 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Handle action bar item clicks here. The action bar will
+     * automatically handle clicks on the Home/Up button, so long
+     * as you specify a parent activity in AndroidManifest.xml.
+     *
+     * @param item Menu item clicked-on
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        if (item.getItemId() == R.id.action_settings) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_settings) {
             Log.d(loggerTag, "Entering settings");
             Intent enterSettingIntent = new Intent(this, SettingsActivity.class);
             startActivity(enterSettingIntent);
+
+            return true;
+        }
+
+        if (id == R.id.action_add_style) {
+            Log.d(loggerTag, "Entering StyleManagementActivity");
+            Intent enterStyleManagementIntent = new Intent(this, StyleManagementActivity.class);
+            startActivity(enterStyleManagementIntent);
 
             return true;
         }
@@ -173,17 +189,38 @@ public class MainActivity extends AppCompatActivity {
 
         if (inputImageView.getDrawable() != null) {
             Log.d(loggerTag, "Putting data into extras Bundle");
-            // TODO: Pass via URI, bitmap can crash
             Bitmap image = ((BitmapDrawable) inputImageView.getDrawable()).getBitmap();
-            neuralStylerIntent.putExtra("image", image);
+            String fileName = savePhotoToFile(image);
+            neuralStylerIntent.putExtra("image", fileName);
 
             Log.d(loggerTag, "Starting NeuralStyler");
-            Log.d(loggerTag, image.toString());
+            Log.d(loggerTag, "Passing photo via file: " + fileName);
             startActivity(neuralStylerIntent);
         } else {
             Log.d(loggerTag, "Attempted starting NeuralStyler with empty image");
             Toast.makeText(context, "Load Image First!", Toast.LENGTH_LONG).show();
         }
     };  // stylizePhotoButtonOnClickListener
+
+    /**
+     * Saves image in temporary file to allow passing it easily between intents
+     *
+     * @param photo Bitmap with photo content
+     *
+     * @return File name image was saved to
+     */
+    final String savePhotoToFile(Bitmap photo) {
+        final String fileName = "extrasBitmap.png";
+        try {
+            FileOutputStream fileStream = this.openFileOutput(fileName, Context.MODE_PRIVATE);
+            photo.compress(Bitmap.CompressFormat.PNG, 100, fileStream);
+            // Clean-up
+            fileStream.close();
+        } catch (IOException e) {
+            Log.e(loggerTag, "Error!" + e.toString());
+        }
+
+        return fileName;
+    }
 
 }  // class
