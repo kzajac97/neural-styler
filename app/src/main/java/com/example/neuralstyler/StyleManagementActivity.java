@@ -125,14 +125,19 @@ public class StyleManagementActivity extends AppCompatActivity {
     }
 
     final View.OnClickListener saveStyleButtonOnClickListener = v -> {
-        if (!painterNameEditText.getText().toString().equals("") && loadedPhoto != null) {
-            Log.d(loggerTag, "Saving new style to local database");
-
-            try {
-                Log.d(loggerTag, "Saving style with "+ painterNameEditText.getText().toString() + " " + loadedPhoto);
-                dbManager.addStyle(painterNameEditText.getText().toString(), loadedPhoto);
-            } catch(Exception e) {
-                Log.e(loggerTag, "DB Error!" + e.toString());
+        String painterName = painterNameEditText.getText().toString();
+        if (!painterName.equals("") && loadedPhoto != null) {  // check if name is already in DB
+            if(dbManager.getAllPaintersNames().contains(painterName)) {
+                Log.v(loggerTag, "Name already used!");
+                Toast.makeText(context, "Name already used!", Toast.LENGTH_LONG).show();
+            } else {
+                Log.d(loggerTag, "Saving new style to local database");
+                try {
+                    Log.d(loggerTag, "Saving style with " + painterName + " " + loadedPhoto);
+                    dbManager.addStyle(painterName, loadedPhoto);
+                } catch(Exception e) {
+                    Log.e(loggerTag, "DB Error!" + e.toString());
+                }
             }
         } else {
             Log.v(loggerTag, "Name or style photo not set!");
