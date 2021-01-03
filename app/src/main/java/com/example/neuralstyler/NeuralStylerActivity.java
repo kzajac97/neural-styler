@@ -1,6 +1,7 @@
 package com.example.neuralstyler;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -17,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
@@ -30,14 +32,14 @@ import java.io.FileInputStream;
 
 @RequiresApi(api = Build.VERSION_CODES.M)
 public class NeuralStylerActivity extends AppCompatActivity {
-    // UI controls
     ImageView inputImageView;
     Button savePhotoButton;
     Button stylizePhotoButton;
     Spinner styleSelectorSpinner;
-    // private variables
+
     private DBManager dbManager;
     private final String loggerTag = "NeuralStylerLogger";
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +57,7 @@ public class NeuralStylerActivity extends AppCompatActivity {
         }
 
         dbManager = DBManager.getInstance(this);
+        context = getApplicationContext();
 
         inputImageView = findViewById(R.id.inputImageView);
 
@@ -68,8 +71,7 @@ public class NeuralStylerActivity extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, dbManager.getAllPaintersNames());
         styleSelectorSpinner.setAdapter(adapter);
 
-        try {
-            Log.d(loggerTag, "Loading image from Bundle");
+        try {  // loading image from MainActivity
             Intent startedWithIntent = getIntent();
 
             FileInputStream inputStream = this.openFileInput(startedWithIntent.getStringExtra("image"));
@@ -92,7 +94,6 @@ public class NeuralStylerActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {  // settings button
-            Log.d(loggerTag, "Entering settings");
             Intent enterSettingIntent = new Intent(this, SettingsActivity.class);
             startActivity(enterSettingIntent);
 
@@ -100,7 +101,6 @@ public class NeuralStylerActivity extends AppCompatActivity {
         }
 
         if (id == R.id.action_add_style) {  // add style button
-            Log.d(loggerTag, "Entering StyleManagementActivity");
             Intent enterStyleManagementIntent = new Intent(this, StyleManagementActivity.class);
             startActivity(enterStyleManagementIntent);
 
@@ -120,7 +120,7 @@ public class NeuralStylerActivity extends AppCompatActivity {
      */
     final View.OnClickListener savePhotoButtonOnClickListener = v -> {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            Log.d(loggerTag, "Permission not granted!");
+            Log.w(loggerTag, "Permission not granted!");
             requestPermissions(new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE }, 1);
         }
         saveImageToGallery(((BitmapDrawable) inputImageView.getDrawable()).getBitmap());
@@ -132,13 +132,14 @@ public class NeuralStylerActivity extends AppCompatActivity {
      * @param image Bitmap object with generated image
      */
     final void saveImageToGallery(Bitmap image) {
-        Log.d(loggerTag, "Saving image:" + image.toString());
         MediaStore.Images.Media.insertImage(
-                getContentResolver(),
-                image,
-                "NeuralStyleImage",
-                "Image Generated with Neural Style Transfer algorithm."
+            getContentResolver(),
+            image,
+            "NeuralStyleImage",
+            "Image Generated with Neural Style Transfer algorithm."
         );
+
+        Toast.makeText(context, "Image saved!", Toast.LENGTH_LONG).show();
     }
 
     /**
