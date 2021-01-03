@@ -202,7 +202,13 @@ public class MainActivity extends AppCompatActivity {
         }
     };  // stylizePhotoButtonOnClickListener
 
-
+    /**
+     * Saves image in temporary file to allow passing it easily between intents
+     *
+     * @param photo Bitmap with photo content
+     *
+     * @return File name image was saved to
+     */
     final String savePhotoToFile(Bitmap photo) {
         final String fileName = "extrasBitmap.png";
         try {

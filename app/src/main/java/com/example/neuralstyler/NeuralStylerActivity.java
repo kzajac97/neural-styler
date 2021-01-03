@@ -145,6 +145,7 @@ public class NeuralStylerActivity extends AppCompatActivity {
      *
      */
     final View.OnClickListener stylizePhotoButtonOnClickListener = v -> {
+        // TODO: TFLite model launched here
         Bitmap b = dbManager.getImageForPainter("Item");
         inputImageView.setImageBitmap(b);
     };  // stylizePhotoButtonOnClickListener
