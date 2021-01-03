@@ -123,7 +123,7 @@ public class NeuralStylerActivity extends AppCompatActivity {
             Log.w(loggerTag, "Permission not granted!");
             requestPermissions(new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE }, 1);
         }
-        saveImageToGallery(((BitmapDrawable) inputImageView.getDrawable()).getBitmap());
+        saveImageToGallery(Utils.getBitmapFromImageView(inputImageView));
     };  // savePhotoButtonOnClickListener
 
     /**
