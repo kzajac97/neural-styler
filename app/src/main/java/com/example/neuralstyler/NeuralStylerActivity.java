@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -27,7 +28,17 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NavUtils;
 import androidx.core.content.ContextCompat;
 
+import com.example.neuralstyler.ml.MagentaArbitraryImageStylizationV1256Int8Prediction1;
+
+import org.tensorflow.lite.support.image.TensorImage;
+import org.tensorflow.lite.support.tensorbuffer.TensorBuffer;
+
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
+import java.util.Arrays;
 
 
 @RequiresApi(api = Build.VERSION_CODES.M)
@@ -71,15 +82,26 @@ public class NeuralStylerActivity extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, dbManager.getAllPaintersNames());
         styleSelectorSpinner.setAdapter(adapter);
 
-        try {  // loading image from MainActivity
-            Intent startedWithIntent = getIntent();
+        Intent startedWithIntent = getIntent();
+        if (startedWithIntent.hasExtra("image")) {  // when starting from MainActivity
+            try {
+                FileInputStream inputStream = this.openFileInput(startedWithIntent.getStringExtra("image"));
+                Bitmap inputImage = BitmapFactory.decodeStream(inputStream);
+                inputImageView.setImageBitmap(inputImage);
+            } catch (FileNotFoundException e) {
+                Log.e(loggerTag, e.toString());
+            }
+        }
 
-            FileInputStream inputStream = this.openFileInput(startedWithIntent.getStringExtra("image"));
-            Bitmap inputImage = BitmapFactory.decodeStream(inputStream);
-
-            inputImageView.setImageBitmap(inputImage);
-        } catch (Exception e) {
-            Log.e(loggerTag, "Error!" + e.toString());
+        else {  // when starting from Gallery or Camera
+            Log.d(loggerTag, startedWithIntent.getDataString());
+            try {
+                FileInputStream inputStream = (FileInputStream) context.getContentResolver().openInputStream(Uri.parse(startedWithIntent.getDataString()));
+                Bitmap inputImage = BitmapFactory.decodeStream(inputStream);
+                inputImageView.setImageBitmap(inputImage);
+            } catch (Exception e) {
+                Log.e(loggerTag, e.toString());
+            }
         }
     }
 
@@ -147,7 +169,34 @@ public class NeuralStylerActivity extends AppCompatActivity {
      */
     final View.OnClickListener stylizePhotoButtonOnClickListener = v -> {
         // TODO: TFLite model launched here
-        Bitmap b = dbManager.getImageForPainter("Item");
-        inputImageView.setImageBitmap(b);
+        // Bitmap bitmap = dbManager.getImageForPainter("Item");
+        Bitmap photo = Utils.getBitmapFromImageView(inputImageView);
+
+        try {
+            Log.d(loggerTag, "Starting Stylizer!");
+            Toast.makeText(context, "Running Model!", Toast.LENGTH_LONG).show();
+            Log.d(loggerTag, "Building model...");
+            MagentaArbitraryImageStylizationV1256Int8Prediction1 model = MagentaArbitraryImageStylizationV1256Int8Prediction1.newInstance(context);
+            Log.d(loggerTag, "Converting image to tensor...");
+            TensorImage styleImage = TensorImage.fromBitmap(photo);
+            Log.d(loggerTag, "Running model...");
+            MagentaArbitraryImageStylizationV1256Int8Prediction1.Outputs outputs = model.process(styleImage);
+            Log.d(loggerTag, "Getting outputs...");
+            TensorBuffer styleBottleneck = outputs.getStyleBottleneckAsTensorBuffer();
+            Log.d(loggerTag, "Converting result to ByteBuffer");
+            ByteBuffer buffer = styleBottleneck.getBuffer();
+            Log.d(loggerTag, "Buffer Shape" + Arrays.toString(styleBottleneck.getShape()));
+            Log.d(loggerTag, "Converting to bitmap...");
+
+            Log.d(loggerTag, "Setting to ImageView");
+            Toast.makeText(context, "Image Stylized!", Toast.LENGTH_LONG).show();
+            // inputImageView.setImageBitmap(bitmap);
+            // TODO: Set output to ImageView
+
+            // Releases model resources if no longer used.
+            model.close();
+        } catch (IOException e) {
+            Log.e(loggerTag, "Error!" + e.toString());
+        }
     };  // stylizePhotoButtonOnClickListener
 }
