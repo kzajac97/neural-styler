@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int RESULT_LOAD_IMG = 2;
-    private final String loggerTag = "NeuralStylerLogger";
+    private final String loggerTag = "MainActivityLogger";
     private Context context;
 
     @Override
