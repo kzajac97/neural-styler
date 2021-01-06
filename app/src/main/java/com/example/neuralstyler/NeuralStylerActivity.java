@@ -28,7 +28,9 @@ import androidx.core.app.NavUtils;
 import androidx.core.content.ContextCompat;
 
 import com.example.neuralstyler.ml.MagentaArbitraryImageStylizationV1256Int8Prediction1;
+import com.example.neuralstyler.ml.MagentaArbitraryImageStylizationV1256Int8Transfer1;
 
+import org.tensorflow.lite.DataType;
 import org.tensorflow.lite.support.image.TensorImage;
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer;
 
@@ -171,35 +173,36 @@ public class NeuralStylerActivity extends AppCompatActivity {
      *
      */
     final View.OnClickListener stylizePhotoButtonOnClickListener = v -> {
-        // TODO: TFLite model launched here
-        // Bitmap bitmap = dbManager.getImageForPainter("Item");
+        Bitmap style = dbManager.getImageForPainter("Item");
         Bitmap photo = Utils.getBitmapFromImageView(mainImageView);
+        TensorBuffer styleBottleneck = null;
 
         try {
-            Log.d(loggerTag, "Starting Stylizer!");
-            Toast.makeText(context, "Running Model!", Toast.LENGTH_LONG).show();
-            Log.d(loggerTag, "Building model...");
             MagentaArbitraryImageStylizationV1256Int8Prediction1 model = MagentaArbitraryImageStylizationV1256Int8Prediction1.newInstance(context);
-            Log.d(loggerTag, "Converting image to tensor...");
-            TensorImage styleImage = TensorImage.fromBitmap(photo);
-            Log.d(loggerTag, "Running model...");
+            TensorImage styleImage = TensorImage.fromBitmap(style);
             MagentaArbitraryImageStylizationV1256Int8Prediction1.Outputs outputs = model.process(styleImage);
-            Log.d(loggerTag, "Getting outputs...");
-            TensorBuffer styleBottleneck = outputs.getStyleBottleneckAsTensorBuffer();
-            Log.d(loggerTag, "Converting result to ByteBuffer");
-            ByteBuffer buffer = styleBottleneck.getBuffer();
-            Log.d(loggerTag, "Buffer Shape" + Arrays.toString(styleBottleneck.getShape()));
-            Log.d(loggerTag, "Converting to bitmap...");
-
-            Log.d(loggerTag, "Setting to ImageView");
-            Toast.makeText(context, "Image Stylized!", Toast.LENGTH_LONG).show();
-            // inputImageView.setImageBitmap(bitmap);
-            // TODO: Set output to ImageView
-
-            // Releases model resources if no longer used.
-            model.close();
+            styleBottleneck = outputs.getStyleBottleneckAsTensorBuffer();
+            model.close();  // Releases model resources if no longer used.
         } catch (IOException e) {
             Log.e(loggerTag, "Error!" + e.toString());
+        }
+
+        try {
+            MagentaArbitraryImageStylizationV1256Int8Transfer1 model = MagentaArbitraryImageStylizationV1256Int8Transfer1.newInstance(context);
+
+            // Creates inputs for reference.
+            TensorImage contentImage = TensorImage.fromBitmap(photo);
+            // Runs model inference and gets result.
+            MagentaArbitraryImageStylizationV1256Int8Transfer1.Outputs outputs = model.process(contentImage, styleBottleneck);
+            TensorImage styledImage = outputs.getStyledImageAsTensorImage();
+            Bitmap styledImageBitmap = styledImage.getBitmap();
+
+            // Releases model resources if no longer used.
+            mainImageView.setImageBitmap(styledImageBitmap);
+            Toast.makeText(context, "Image Stylized!", Toast.LENGTH_LONG).show();
+            model.close();
+        } catch (IOException e) {
+            Log.e("Error!", e.toString());
         }
     };  // stylizePhotoButtonOnClickListener
 }
