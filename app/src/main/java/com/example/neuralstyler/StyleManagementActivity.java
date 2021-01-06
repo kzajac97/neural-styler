@@ -119,7 +119,7 @@ public class StyleManagementActivity extends AppCompatActivity {
         try {  // try load image from stream
             imageStream = getContentResolver().openInputStream(imageUri);
         } catch (FileNotFoundException e) {
-            Log.e(loggerTag, "Error!" + e.toString());
+            Log.e(loggerTag, "Error! " + e.toString());
         }
 
         loadedPhoto = BitmapFactory.decodeStream(imageStream);
@@ -152,7 +152,7 @@ public class StyleManagementActivity extends AppCompatActivity {
                 dbManager.addStyle(painterName, stylePhotoPath);
                 Toast.makeText(context, "Style added!", Toast.LENGTH_LONG).show();
             } catch(Exception e) {
-                Log.e(loggerTag, "Error!" + e.toString());
+                Log.e(loggerTag, "Error! " + e.toString());
             }
         }
     }  // addStyle

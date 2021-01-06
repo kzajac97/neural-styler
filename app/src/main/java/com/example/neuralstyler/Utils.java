@@ -66,7 +66,7 @@ public class Utils {
             photo.compress(Bitmap.CompressFormat.PNG, 100, fileStream);
             fileStream.close();  // clean-up
         } catch (IOException e) {
-            Log.e(loggerTag, "Error!" + e.toString());
+            Log.e(loggerTag, "Error! " + e.toString());
         }
 
         return fileName;

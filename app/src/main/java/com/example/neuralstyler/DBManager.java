@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.graphics.Bitmap;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -122,7 +121,7 @@ public class DBManager extends SQLiteOpenHelper {
             db.setTransactionSuccessful();
             Log.d(loggerTag, "Transaction successful!");
         } catch(Exception e) {
-            Log.e(loggerTag, "Error!" + e.toString());
+            Log.e(loggerTag, "DB Error! " + e.toString());
         } finally {
             db.endTransaction();
         }
