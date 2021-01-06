@@ -164,7 +164,7 @@ public class NeuralStylerActivity extends AppCompatActivity {
      * Creates and runs MagentaModel
      */
     final View.OnClickListener stylizePhotoButtonOnClickListener = v -> {
-        Bitmap styleImage = dbManager.getImageForPainter("Item");
+        Bitmap styleImage = dbManager.getImageForPainter(styleSelectorSpinner.getSelectedItem().toString());
         Bitmap contentImage = Utils.getBitmapFromImageView(mainImageView);
 
         Toast.makeText(context, "Starting model...", Toast.LENGTH_LONG).show();
