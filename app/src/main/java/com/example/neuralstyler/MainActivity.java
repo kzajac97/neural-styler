@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -53,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         // main image display
-        inputImageView = findViewById(R.id.inputImageView);
+        inputImageView = findViewById(R.id.mainImageView);
         // load controls
         takePhotoButton = findViewById(R.id.takePhotoButton);
         loadPhotoButton = findViewById(R.id.loadPhotoButton);

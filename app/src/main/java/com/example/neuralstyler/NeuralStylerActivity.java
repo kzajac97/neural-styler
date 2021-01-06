@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -37,13 +36,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 import java.util.Arrays;
 
 
 @RequiresApi(api = Build.VERSION_CODES.M)
 public class NeuralStylerActivity extends AppCompatActivity {
-    ImageView inputImageView;
+    ImageView mainImageView;
     Button savePhotoButton;
     Button stylizePhotoButton;
     Spinner styleSelectorSpinner;
@@ -70,7 +68,7 @@ public class NeuralStylerActivity extends AppCompatActivity {
         dbManager = DBManager.getInstance(this);
         context = getApplicationContext();
 
-        inputImageView = findViewById(R.id.inputImageView);
+        mainImageView = findViewById(R.id.mainImageView);
 
         savePhotoButton = findViewById(R.id.savePhotoButton);
         savePhotoButton.setOnClickListener(savePhotoButtonOnClickListener);
@@ -82,27 +80,8 @@ public class NeuralStylerActivity extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, dbManager.getAllPaintersNames());
         styleSelectorSpinner.setAdapter(adapter);
 
-        Intent startedWithIntent = getIntent();
-        if (startedWithIntent.hasExtra("image")) {  // when starting from MainActivity
-            try {
-                FileInputStream inputStream = this.openFileInput(startedWithIntent.getStringExtra("image"));
-                Bitmap inputImage = BitmapFactory.decodeStream(inputStream);
-                inputImageView.setImageBitmap(inputImage);
-            } catch (FileNotFoundException e) {
-                Log.e(loggerTag, e.toString());
-            }
-        }
-
-        else {  // when starting from Gallery or Camera
-            Log.d(loggerTag, startedWithIntent.getDataString());
-            try {
-                FileInputStream inputStream = (FileInputStream) context.getContentResolver().openInputStream(Uri.parse(startedWithIntent.getDataString()));
-                Bitmap inputImage = BitmapFactory.decodeStream(inputStream);
-                inputImageView.setImageBitmap(inputImage);
-            } catch (Exception e) {
-                Log.e(loggerTag, e.toString());
-            }
-        }
+        Bitmap inputImage = BitmapFactory.decodeStream(getImageInputStream(getIntent()));
+        mainImageView.setImageBitmap(inputImage);
     }
 
     @Override
@@ -138,6 +117,30 @@ public class NeuralStylerActivity extends AppCompatActivity {
     }
 
     /**
+     * Get FileInputStream with image URI used in activity
+     *
+     * @param activityStartingIntent intent triggering activity start
+     *
+     * @return FileStream for image which will be used in Activity
+     */
+    private FileInputStream getImageInputStream(Intent activityStartingIntent) {
+        FileInputStream inputStream = null;
+
+        try {
+            if (activityStartingIntent.hasExtra("image")) {
+                // when starting from MainActivity
+                inputStream = this.openFileInput(activityStartingIntent.getStringExtra("image"));
+            } else {  // when starting from Gallery or Camera Activity
+                inputStream = (FileInputStream) context.getContentResolver().openInputStream(Uri.parse(activityStartingIntent.getDataString()));
+            }
+        } catch (FileNotFoundException e) {
+            Log.e(loggerTag, e.toString());
+        }
+
+        return inputStream;
+    }
+
+    /**
      * Saves generated image into Gallery
      */
     final View.OnClickListener savePhotoButtonOnClickListener = v -> {
@@ -145,7 +148,7 @@ public class NeuralStylerActivity extends AppCompatActivity {
             Log.w(loggerTag, "Permission not granted!");
             requestPermissions(new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE }, 1);
         }
-        saveImageToGallery(Utils.getBitmapFromImageView(inputImageView));
+        saveImageToGallery(Utils.getBitmapFromImageView(mainImageView));
     };  // savePhotoButtonOnClickListener
 
     /**
@@ -170,7 +173,7 @@ public class NeuralStylerActivity extends AppCompatActivity {
     final View.OnClickListener stylizePhotoButtonOnClickListener = v -> {
         // TODO: TFLite model launched here
         // Bitmap bitmap = dbManager.getImageForPainter("Item");
-        Bitmap photo = Utils.getBitmapFromImageView(inputImageView);
+        Bitmap photo = Utils.getBitmapFromImageView(mainImageView);
 
         try {
             Log.d(loggerTag, "Starting Stylizer!");
