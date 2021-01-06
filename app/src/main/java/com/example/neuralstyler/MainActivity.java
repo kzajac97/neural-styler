@@ -200,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (inputImageView.getDrawable() != null) {
             Bitmap photo = Utils.getBitmapFromImageView(inputImageView);
-            String fileName = savePhotoToFile(photo);
+            String fileName = Utils.savePhotoToFile(photo, context);
             neuralStylerIntent.putExtra("image", fileName);
 
             startActivity(neuralStylerIntent);
@@ -208,24 +208,4 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(context, "Load Image First!", Toast.LENGTH_LONG).show();
         }
     };  // stylizePhotoButtonOnClickListener
-
-    /**
-     * Saves image in temporary file to allow passing it easily between intents
-     *
-     * @param photo Bitmap with photo content
-     * @return File name image was saved to
-     */
-    final String savePhotoToFile(Bitmap photo) {
-        final String fileName = "extrasBitmap.png";
-        try {
-            FileOutputStream fileStream = this.openFileOutput(fileName, Context.MODE_PRIVATE);
-            photo.compress(Bitmap.CompressFormat.PNG, 100, fileStream);
-            fileStream.close();  // clean-up
-        } catch (IOException e) {
-            Log.e(loggerTag, "Error!" + e.toString());
-        }
-
-        return fileName;
-    }
-
 }  // class

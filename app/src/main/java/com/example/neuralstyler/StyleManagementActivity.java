@@ -148,10 +148,11 @@ public class StyleManagementActivity extends AppCompatActivity {
             Toast.makeText(context, "Name already used!", Toast.LENGTH_LONG).show();
         } else {
             try {
-                dbManager.addStyle(painterName, stylePhoto);
+                String stylePhotoPath = Utils.savePhotoToFile(stylePhoto, context);
+                dbManager.addStyle(painterName, stylePhotoPath);
                 Toast.makeText(context, "Style added!", Toast.LENGTH_LONG).show();
             } catch(Exception e) {
-                Log.e(loggerTag, "DB Error!" + e.toString());
+                Log.e(loggerTag, "Error!" + e.toString());
             }
         }
     }  // addStyle

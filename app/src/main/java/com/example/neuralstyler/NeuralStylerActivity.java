@@ -29,6 +29,7 @@ import androidx.core.content.ContextCompat;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 
 @RequiresApi(api = Build.VERSION_CODES.M)
@@ -164,7 +165,8 @@ public class NeuralStylerActivity extends AppCompatActivity {
      * Creates and runs MagentaModel
      */
     final View.OnClickListener stylizePhotoButtonOnClickListener = v -> {
-        Bitmap styleImage = dbManager.getImageForPainter(styleSelectorSpinner.getSelectedItem().toString());
+        String selectedStyle = styleSelectorSpinner.getSelectedItem().toString();
+        Bitmap styleImage = Utils.loadPhotoFromFile(dbManager.getImagePathForPainter(selectedStyle), context);
         Bitmap contentImage = Utils.getBitmapFromImageView(mainImageView);
 
         Toast.makeText(context, "Starting model...", Toast.LENGTH_LONG).show();

@@ -21,7 +21,7 @@ public class DBManager extends SQLiteOpenHelper {
     // column names
     private static final String ID = "id";
     private static final String KEY_PAINTER_NAME = "painter_name";
-    private static final String KEY_SAMPLE_IMAGE = "sample_image";
+    private static final String KEY_SAMPLE_IMAGE_PATH = "sample_image";
     // private variables
     private final String loggerTag = "DBLogger";
     private static DBManager selfInstance;
@@ -58,7 +58,7 @@ public class DBManager extends SQLiteOpenHelper {
                 "(" +
                     ID +  " INTEGER PRIMARY KEY,  " +
                     KEY_PAINTER_NAME + " TEXT," +
-                    KEY_SAMPLE_IMAGE + " BLOB" +
+                    KEY_SAMPLE_IMAGE_PATH + " TEXT" +
                 ")";
 
         db.execSQL(CREATE_TABLE);
@@ -92,15 +92,15 @@ public class DBManager extends SQLiteOpenHelper {
      * Packs input data into ContentValues object
      *
      * @param painterName unique name for given painter
-     * @param sampleImage style photo used by styles across application
+     * @param sampleImagePath style photo used by styles across application
      *
      * @return data packed into ContentValues object
      */
-    private ContentValues packValues(String painterName, Bitmap sampleImage) {
+    private ContentValues packValues(String painterName, String sampleImagePath) {
         ContentValues values = new ContentValues();
 
         values.put(KEY_PAINTER_NAME, painterName);
-        values.put(KEY_SAMPLE_IMAGE, Utils.compressBitmap(sampleImage));
+        values.put(KEY_SAMPLE_IMAGE_PATH, sampleImagePath);
 
         return values;
     }
@@ -109,16 +109,16 @@ public class DBManager extends SQLiteOpenHelper {
      * Add new artistic style to DB
      *
      * @param painterName unique name for given painter
-     * @param sampleImage style photo used by styles across application
+     * @param sampleImagePath style photo used by styles across application
      */
-    public void addStyle(String painterName, Bitmap sampleImage) {
+    public void addStyle(String painterName, String sampleImagePath) {
         Log.d(loggerTag, "Adding style to DB");
 
         SQLiteDatabase db = getWritableDatabase();
         db.beginTransaction();  // wrap operations with transaction
 
         try {
-            db.insertOrThrow(TABLE_STYLES, null, packValues(painterName, sampleImage));
+            db.insertOrThrow(TABLE_STYLES, null, packValues(painterName, sampleImagePath));
             db.setTransactionSuccessful();
             Log.d(loggerTag, "Transaction successful!");
         } catch(Exception e) {
@@ -162,15 +162,15 @@ public class DBManager extends SQLiteOpenHelper {
      *
      * @return Bitmap containing image loaded and decompressed from DB
      */
-    public Bitmap getImageForPainter(String painterName) {
-        byte[] queryResult = null;
+    public String getImagePathForPainter(String painterName) {
+        String queryResult = null;
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.query(TABLE_STYLES, new String[]{ KEY_SAMPLE_IMAGE }, KEY_PAINTER_NAME + "=?", new String[]{ painterName }, null, null, null);
+        Cursor cursor = db.query(TABLE_STYLES, new String[]{KEY_SAMPLE_IMAGE_PATH}, KEY_PAINTER_NAME + "=?", new String[]{ painterName }, null, null, null);
 
         try {
             if(cursor.moveToFirst()) {
                 do {  // add all queried records to DB
-                    queryResult = cursor.getBlob(cursor.getColumnIndex(KEY_SAMPLE_IMAGE));
+                    queryResult = cursor.getString(cursor.getColumnIndex(KEY_SAMPLE_IMAGE_PATH));
                 } while (cursor.moveToNext());
             }
         } catch (Exception e) {
@@ -181,7 +181,7 @@ public class DBManager extends SQLiteOpenHelper {
             }
         }
 
-        return Utils.decompressBitmap(queryResult);
+        return queryResult;
     }
 
     /**
