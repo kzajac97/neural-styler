@@ -1,1 +1,3 @@
 /build
+/app/models
+!app/models/README.md

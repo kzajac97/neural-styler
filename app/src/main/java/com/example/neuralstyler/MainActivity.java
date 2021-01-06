@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -41,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int RESULT_LOAD_IMG = 2;
-    private final String loggerTag = "NeuralStylerLogger";
+    private final String loggerTag = "MainActivityLogger";
     private Context context;
 
     @Override
@@ -53,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         // main image display
-        inputImageView = findViewById(R.id.inputImageView);
+        inputImageView = findViewById(R.id.mainImageView);
         // load controls
         takePhotoButton = findViewById(R.id.takePhotoButton);
         loadPhotoButton = findViewById(R.id.loadPhotoButton);
@@ -118,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
     final View.OnClickListener takePhotoButtonOnClickListener = v -> {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             Log.w(loggerTag, "Permission not granted!");
-            requestPermissions(new String[]{Manifest.permission.CAMERA}, 1);
+            requestPermissions(new String[]{ Manifest.permission.CAMERA }, 1);
         }
         startCameraActivityForResult();
     };  // takePhotoButtonOnClickListener
@@ -143,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
     final View.OnClickListener loadPhotoButtonOnClickListener = v -> {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             Log.w(loggerTag, "Permission not granted!");
-            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+            requestPermissions(new String[]{ Manifest.permission.READ_EXTERNAL_STORAGE }, 1);
         }
         startGalleryActivityForResult();
     };  // loadPhotoButtonOnClickListener
