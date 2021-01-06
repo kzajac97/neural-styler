@@ -27,18 +27,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NavUtils;
 import androidx.core.content.ContextCompat;
 
-import com.example.neuralstyler.ml.MagentaArbitraryImageStylizationV1256Int8Prediction1;
-import com.example.neuralstyler.ml.MagentaArbitraryImageStylizationV1256Int8Transfer1;
-
-import org.tensorflow.lite.DataType;
-import org.tensorflow.lite.support.image.TensorImage;
-import org.tensorflow.lite.support.tensorbuffer.TensorBuffer;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.Arrays;
 
 
 @RequiresApi(api = Build.VERSION_CODES.M)
@@ -170,39 +160,19 @@ public class NeuralStylerActivity extends AppCompatActivity {
     }
 
     /**
-     *
+     * Handles actions on stylizePhotoButton click
+     * Creates and runs MagentaModel
      */
     final View.OnClickListener stylizePhotoButtonOnClickListener = v -> {
-        Bitmap style = dbManager.getImageForPainter("Item");
-        Bitmap photo = Utils.getBitmapFromImageView(mainImageView);
-        TensorBuffer styleBottleneck = null;
+        Bitmap styleImage = dbManager.getImageForPainter("Item");
+        Bitmap contentImage = Utils.getBitmapFromImageView(mainImageView);
 
-        try {
-            MagentaArbitraryImageStylizationV1256Int8Prediction1 model = MagentaArbitraryImageStylizationV1256Int8Prediction1.newInstance(context);
-            TensorImage styleImage = TensorImage.fromBitmap(style);
-            MagentaArbitraryImageStylizationV1256Int8Prediction1.Outputs outputs = model.process(styleImage);
-            styleBottleneck = outputs.getStyleBottleneckAsTensorBuffer();
-            model.close();  // Releases model resources if no longer used.
-        } catch (IOException e) {
-            Log.e(loggerTag, "Error!" + e.toString());
-        }
+        Toast.makeText(context, "Starting model...", Toast.LENGTH_LONG).show();
 
-        try {
-            MagentaArbitraryImageStylizationV1256Int8Transfer1 model = MagentaArbitraryImageStylizationV1256Int8Transfer1.newInstance(context);
+        MagentaModel model = new MagentaModel(context);
+        Bitmap stylizedImage = model.transferStyle(contentImage, styleImage);
 
-            // Creates inputs for reference.
-            TensorImage contentImage = TensorImage.fromBitmap(photo);
-            // Runs model inference and gets result.
-            MagentaArbitraryImageStylizationV1256Int8Transfer1.Outputs outputs = model.process(contentImage, styleBottleneck);
-            TensorImage styledImage = outputs.getStyledImageAsTensorImage();
-            Bitmap styledImageBitmap = styledImage.getBitmap();
-
-            // Releases model resources if no longer used.
-            mainImageView.setImageBitmap(styledImageBitmap);
-            Toast.makeText(context, "Image Stylized!", Toast.LENGTH_LONG).show();
-            model.close();
-        } catch (IOException e) {
-            Log.e("Error!", e.toString());
-        }
+        Toast.makeText(context, "Image stylized!", Toast.LENGTH_LONG).show();
+        mainImageView.setImageBitmap(stylizedImage);
     };  // stylizePhotoButtonOnClickListener
 }
