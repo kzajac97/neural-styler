@@ -15,8 +15,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -34,9 +35,11 @@ import java.io.FileNotFoundException;
 @RequiresApi(api = Build.VERSION_CODES.M)
 public class NeuralStylerActivity extends AppCompatActivity {
     ImageView mainImageView;
-    Button savePhotoButton;
-    Button stylizePhotoButton;
+    ImageButton savePhotoButton;
+    ImageButton stylizePhotoButton;
+    ImageButton launchSpinner;
     Spinner styleSelectorSpinner;
+    ProgressBar progressBar;
 
     private DBManager dbManager;
     private final String loggerTag = "NeuralStylerLogger";
@@ -60,6 +63,7 @@ public class NeuralStylerActivity extends AppCompatActivity {
         dbManager = DBManager.getInstance(this);
         context = getApplicationContext();
 
+        progressBar = findViewById(R.id.progressBar);
         mainImageView = findViewById(R.id.mainImageView);
 
         savePhotoButton = findViewById(R.id.savePhotoButton);
@@ -71,6 +75,9 @@ public class NeuralStylerActivity extends AppCompatActivity {
         styleSelectorSpinner = findViewById(R.id.styleSelectorSpinner);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, dbManager.getAllPaintersNames());
         styleSelectorSpinner.setAdapter(adapter);
+
+        launchSpinner = findViewById(R.id.mimicSpinnerButton);
+        launchSpinner.setOnClickListener(v -> styleSelectorSpinner.performClick());
 
         Bitmap inputImage = BitmapFactory.decodeStream(getImageInputStream(getIntent()));
         mainImageView.setImageBitmap(inputImage);
@@ -107,6 +114,7 @@ public class NeuralStylerActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
 
     /**
      * Get FileInputStream with image URI used in activity
@@ -168,11 +176,10 @@ public class NeuralStylerActivity extends AppCompatActivity {
         Bitmap styleImage = Utils.loadPhotoFromFile(dbManager.getImagePathForPainter(selectedStyle), context);
         Bitmap contentImage = Utils.getBitmapFromImageView(mainImageView);
 
-        Toast.makeText(context, "Starting model...", Toast.LENGTH_LONG).show();
-
+        progressBar.setVisibility(View.VISIBLE);
         MagentaModel model = new MagentaModel(context);
         Bitmap stylizedImage = model.transferStyle(contentImage, styleImage);
-
+        progressBar.setVisibility(View.INVISIBLE);
         Toast.makeText(context, "Image stylized!", Toast.LENGTH_LONG).show();
         mainImageView.setImageBitmap(stylizedImage);
     };  // stylizePhotoButtonOnClickListener
