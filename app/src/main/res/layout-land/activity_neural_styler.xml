@@ -64,10 +64,23 @@
 
             <Spinner
                 android:id="@+id/styleSelectorSpinner"
-                android:layout_width="240dp"
+                android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:background="@android:drawable/btn_dropdown"
-                android:spinnerMode="dropdown" />
+                android:spinnerMode="dialog"
+                android:visibility="gone" />
+
+            <ImageButton
+                android:id="@+id/mimicSpinnerButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="0dp"
+                android:src="@drawable/ic_baseline_arrow_drop_down_24"
+                android:drawableTint="@color/black"
+                tools:targetApi="m"
+                android:contentDescription="@string/take_photo_description"
+                android:minHeight="60dp"
+                android:minWidth="60dp" />
 
             <ImageButton
                 android:id="@+id/stylizePhotoButton"

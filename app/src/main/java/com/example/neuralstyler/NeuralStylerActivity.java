@@ -1,7 +1,6 @@
 package com.example.neuralstyler;
 
 import android.Manifest;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -38,6 +37,7 @@ public class NeuralStylerActivity extends AppCompatActivity {
     ImageView mainImageView;
     ImageButton savePhotoButton;
     ImageButton stylizePhotoButton;
+    ImageButton launchSpinner;
     Spinner styleSelectorSpinner;
     ProgressBar progressBar;
 
@@ -75,6 +75,9 @@ public class NeuralStylerActivity extends AppCompatActivity {
         styleSelectorSpinner = findViewById(R.id.styleSelectorSpinner);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, dbManager.getAllPaintersNames());
         styleSelectorSpinner.setAdapter(adapter);
+
+        launchSpinner = findViewById(R.id.mimicSpinnerButton);
+        launchSpinner.setOnClickListener(v -> styleSelectorSpinner.performClick());
 
         Bitmap inputImage = BitmapFactory.decodeStream(getImageInputStream(getIntent()));
         mainImageView.setImageBitmap(inputImage);
