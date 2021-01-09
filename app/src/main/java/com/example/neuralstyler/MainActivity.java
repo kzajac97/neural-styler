@@ -16,7 +16,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -32,9 +32,9 @@ import java.io.InputStream;
 @RequiresApi(api = Build.VERSION_CODES.M)
 public class MainActivity extends AppCompatActivity {
     ImageView inputImageView;
-    Button takePhotoButton;
-    Button loadPhotoButton;
-    Button stylizePhotoButton;
+    ImageButton takePhotoButton;
+    ImageButton loadPhotoButton;
+    ImageButton stylizePhotoButton;
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int RESULT_LOAD_IMG = 2;
@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         // load controls
         takePhotoButton = findViewById(R.id.takePhotoButton);
         loadPhotoButton = findViewById(R.id.loadPhotoButton);
-        stylizePhotoButton = findViewById(R.id.savePhotoButton);
+        stylizePhotoButton = findViewById(R.id.runNeuralStylerButton);
         // set listeners
         takePhotoButton.setOnClickListener(takePhotoButtonOnClickListener);
         loadPhotoButton.setOnClickListener(loadPhotoButtonOnClickListener);

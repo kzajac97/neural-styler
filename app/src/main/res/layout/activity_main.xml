@@ -54,32 +54,38 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <Button
-            android:id="@+id/takePhotoButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="0dp"
-            android:backgroundTint="@color/teal_700"
-            android:text="@string/take_photo_button_label"
-            android:textSize="20sp" />
+        <TableRow>
+            <ImageButton
+                android:id="@+id/takePhotoButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="0dp"
+                android:src="@drawable/ic_baseline_camera_alt_24"
+                android:drawableTint="@color/black"
+                tools:targetApi="m"
+                android:contentDescription="Take Photo" />
 
-        <Button
-            android:id="@+id/loadPhotoButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="0dp"
-            android:backgroundTint="@color/teal_700"
-            android:text="@string/load_photo_button_label"
-            android:textSize="20sp" />
+            <ImageButton
+                android:id="@+id/loadPhotoButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="0dp"
+                android:src="@drawable/ic_baseline_photo_24"
+                android:drawableTint="@color/black"
+                tools:targetApi="m"
+                android:contentDescription="Load Photo" />
 
-        <Button
-            android:id="@+id/savePhotoButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="0dp"
-            android:backgroundTint="@color/teal_700"
-            android:text="@string/stylize_photo_button_label"
-            android:textSize="20sp" />
+            <ImageButton
+                android:id="@+id/runNeuralStylerButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="0dp"
+                android:src="@drawable/ic_baseline_palette_24"
+                android:drawableTint="@color/black"
+                tools:targetApi="m"
+                android:contentDescription="Stylize Photo" />
+
+        </TableRow>
     </TableLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
     <include layout="@layout/content_main" />

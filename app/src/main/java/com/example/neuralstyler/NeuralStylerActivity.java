@@ -62,7 +62,7 @@ public class NeuralStylerActivity extends AppCompatActivity {
 
         mainImageView = findViewById(R.id.mainImageView);
 
-        savePhotoButton = findViewById(R.id.savePhotoButton);
+        savePhotoButton = findViewById(R.id.runNeuralStylerButton);
         savePhotoButton.setOnClickListener(savePhotoButtonOnClickListener);
 
         stylizePhotoButton = findViewById(R.id.stylizePhotoButton);
