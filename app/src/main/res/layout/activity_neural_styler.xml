@@ -67,7 +67,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="0dp"
                 android:backgroundTint="@color/teal_700"
-                android:text="@string/stylize_photo_button_label"
+                android:text="Stylize"
                 android:textSize="20sp" />
 
             <Button

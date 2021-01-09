@@ -9,9 +9,9 @@
 
     <!-- Button labels in MainActivity UI -->
     <string name="input_image_description">input image</string>
-    <string name="take_photo_button_label">Take Photo</string>
-    <string name="load_photo_button_label">Load Photo</string>
-    <string name="stylize_photo_button_label">Stylize Image</string>
+    <string name="take_photo_description">Take Photo</string>
+    <string name="load_photo_description">Load Photo</string>
+    <string name="run_neural_style_description">Run Neural Styler</string>
 
     <!-- NeuralStylerActivity UI controls labels -->
     <string name="save_image_button_label">Save Image</string>
