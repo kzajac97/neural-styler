@@ -1,6 +1,7 @@
 package com.example.neuralstyler;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -37,6 +39,7 @@ public class NeuralStylerActivity extends AppCompatActivity {
     ImageButton savePhotoButton;
     ImageButton stylizePhotoButton;
     Spinner styleSelectorSpinner;
+    ProgressBar progressBar;
 
     private DBManager dbManager;
     private final String loggerTag = "NeuralStylerLogger";
@@ -60,6 +63,7 @@ public class NeuralStylerActivity extends AppCompatActivity {
         dbManager = DBManager.getInstance(this);
         context = getApplicationContext();
 
+        progressBar = findViewById(R.id.progressBar);
         mainImageView = findViewById(R.id.mainImageView);
 
         savePhotoButton = findViewById(R.id.savePhotoButton);
@@ -107,6 +111,7 @@ public class NeuralStylerActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
 
     /**
      * Get FileInputStream with image URI used in activity
@@ -168,11 +173,10 @@ public class NeuralStylerActivity extends AppCompatActivity {
         Bitmap styleImage = Utils.loadPhotoFromFile(dbManager.getImagePathForPainter(selectedStyle), context);
         Bitmap contentImage = Utils.getBitmapFromImageView(mainImageView);
 
-        Toast.makeText(context, "Starting model...", Toast.LENGTH_LONG).show();
-
+        progressBar.setVisibility(View.VISIBLE);
         MagentaModel model = new MagentaModel(context);
         Bitmap stylizedImage = model.transferStyle(contentImage, styleImage);
-
+        progressBar.setVisibility(View.INVISIBLE);
         Toast.makeText(context, "Image stylized!", Toast.LENGTH_LONG).show();
         mainImageView.setImageBitmap(stylizedImage);
     };  // stylizePhotoButtonOnClickListener

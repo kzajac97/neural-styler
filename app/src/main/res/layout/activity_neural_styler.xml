@@ -17,7 +17,6 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/Theme.NeuralStyler.PopupOverlay"/>
-
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -25,6 +24,17 @@
         android:layout_height="match_parent"
         android:layout_marginTop="54dp"
         tools:context=".NeuralStylerActivity">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:translationZ="5dp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toTopOf="@id/addControlsTableLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/mainImageView"
