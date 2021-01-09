@@ -15,7 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -34,8 +34,8 @@ import java.io.FileNotFoundException;
 @RequiresApi(api = Build.VERSION_CODES.M)
 public class NeuralStylerActivity extends AppCompatActivity {
     ImageView mainImageView;
-    Button savePhotoButton;
-    Button stylizePhotoButton;
+    ImageButton savePhotoButton;
+    ImageButton stylizePhotoButton;
     Spinner styleSelectorSpinner;
 
     private DBManager dbManager;
@@ -62,7 +62,7 @@ public class NeuralStylerActivity extends AppCompatActivity {
 
         mainImageView = findViewById(R.id.mainImageView);
 
-        savePhotoButton = findViewById(R.id.runNeuralStylerButton);
+        savePhotoButton = findViewById(R.id.savePhotoButton);
         savePhotoButton.setOnClickListener(savePhotoButtonOnClickListener);
 
         stylizePhotoButton = findViewById(R.id.stylizePhotoButton);

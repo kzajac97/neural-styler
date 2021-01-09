@@ -23,16 +23,13 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="54dp"
         tools:context=".NeuralStylerActivity">
 
         <ImageView
             android:id="@+id/mainImageView"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
             android:layout_marginBottom="10dp"
             android:adjustViewBounds="true"
             android:contentDescription="@string/input_image_description"
@@ -44,7 +41,7 @@
             tools:layout_width="match_parent"
             tools:src="" />
 
-        <TableLayout
+        <TableRow
             android:id="@+id/addControlsTableLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -52,33 +49,40 @@
             android:layout_marginBottom="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+            app:layout_constraintStart_toStartOf="parent"
+            android:padding="5dp">
 
             <Spinner
                 android:id="@+id/styleSelectorSpinner"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_width="240dp"
+                android:layout_height="60dp"
                 android:background="@android:drawable/btn_dropdown"
                 android:spinnerMode="dropdown" />
 
-            <Button
+            <ImageButton
                 android:id="@+id/stylizePhotoButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="0dp"
-                android:backgroundTint="@color/teal_700"
-                android:text="Stylize"
-                android:textSize="20sp" />
+                android:src="@drawable/ic_baseline_palette_24"
+                android:drawableTint="@color/black"
+                tools:targetApi="m"
+                android:contentDescription="@string/take_photo_description"
+                android:minHeight="60dp"
+                android:minWidth="60dp" />
 
-            <Button
-                android:id="@+id/runNeuralStylerButton"
+            <ImageButton
+                android:id="@+id/savePhotoButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="0dp"
-                android:backgroundTint="@color/teal_700"
-                android:text="@string/save_image_button_label"
-                android:textSize="20sp" />
-        </TableLayout>
+                android:src="@drawable/ic_baseline_save_24"
+                android:drawableTint="@color/black"
+                tools:targetApi="m"
+                android:contentDescription="@string/take_photo_description"
+                android:minHeight="60dp"
+                android:minWidth="60dp" />
+        </TableRow>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
     <include layout="@layout/content_main" />
