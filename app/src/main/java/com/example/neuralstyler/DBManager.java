@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -184,10 +185,22 @@ public class DBManager extends SQLiteOpenHelper {
     }
 
     /**
+     * Clears record corresponding to given name from DB
+     *
+     * @param painterName name of the painter to be removed from DB
+     */
+    public void clearRecord(String painterName) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        db.delete(TABLE_STYLES, KEY_PAINTER_NAME + "=?", new String[]{ painterName });
+        db.close();
+    }
+
+    /**
      * Clears all records from DB
      * Does not drop the tables, only clears records
      */
-    public void clearRecords() {
+    public void clearAllRecords() {
         SQLiteDatabase db = getWritableDatabase();
 
         db.delete(TABLE_STYLES, null, null);

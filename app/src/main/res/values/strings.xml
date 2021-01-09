@@ -24,7 +24,7 @@
 
     <!-- Clearing Styles Labels -->
     <string name="clear_style_title_label">Clear Styles</string>
-    <string name="clear_styles_button_label">Clear Styles</string>
+    <string name="clear_styles_button_label">Remove Style</string>
 
     <!-- Preference Titles -->
     <string name="theme_preference_title_label">Theme</string>

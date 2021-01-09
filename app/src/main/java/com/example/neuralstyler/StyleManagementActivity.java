@@ -14,8 +14,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
@@ -35,6 +37,7 @@ public class StyleManagementActivity extends AppCompatActivity {
     Button chooseStylePhoto;
     Button saveStyleButton;
     Button clearStylesButton;
+    Spinner styleSelectorSpinner;
 
     Bitmap loadedPhoto = null;
     private DBManager dbManager;
@@ -70,6 +73,10 @@ public class StyleManagementActivity extends AppCompatActivity {
 
         clearStylesButton = findViewById(R.id.clearStyles);
         clearStylesButton.setOnClickListener(clearStylesButtonOnClickListener);
+
+        styleSelectorSpinner = findViewById(R.id.styleSelectorSpinner);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, dbManager.getAllPaintersNames());
+        styleSelectorSpinner.setAdapter(adapter);
     }
 
     @Override
@@ -175,7 +182,7 @@ public class StyleManagementActivity extends AppCompatActivity {
      * Handles operations when clicking on clearStylesButton
      */
     final View.OnClickListener clearStylesButtonOnClickListener = v -> {
-        dbManager.clearRecords();
-        Toast.makeText(context, "All styles cleared!", Toast.LENGTH_LONG).show();
+        dbManager.clearRecord(styleSelectorSpinner.getSelectedItem().toString());
+        Toast.makeText(context, "Style Cleared!", Toast.LENGTH_LONG).show();
     };  // clearStylesButtonOnClickListener
 }
