@@ -81,7 +81,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="0dp"
-                android:src="@drawable/ic_baseline_palette_24"
+                android:src="@drawable/ic_launcher_foreground"
                 android:drawableTint="@color/black"
                 tools:targetApi="m"
                 android:contentDescription="@string/run_neural_style_description"
