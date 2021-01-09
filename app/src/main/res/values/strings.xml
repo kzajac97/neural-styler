@@ -12,9 +12,7 @@
     <string name="take_photo_description">Take Photo</string>
     <string name="load_photo_description">Load Photo</string>
     <string name="run_neural_style_description">Run Neural Styler</string>
-
-    <!-- NeuralStylerActivity UI controls labels -->
-    <string name="save_image_button_label">Save Image</string>
+    <string name="share_photo_description">Share Photo</string>
 
     <!-- Adding Styles Activity Labels -->
     <string name="add_style_title_label">Add Style</string>
