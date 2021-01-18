@@ -55,14 +55,19 @@ public class SettingsActivity extends AppCompatActivity {
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            ListPreference preference = (ListPreference) findPreference("theme");
-            Log.d(loggerTag, (String) preference.getEntry());
-            String setValue = (String) preference.getEntry();
+            ListPreference preference = findPreference("theme");
+            String nightThemeLabel = "Night";
 
-            if (setValue.equals("Night")) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            if (preference != null) {
+                String setValue = (String) preference.getEntry();
+
+                if (setValue.equals(nightThemeLabel)) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                } else {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                }
             } else {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                Log.w(loggerTag, "Warning! Null Preference!");
             }
         }
     }

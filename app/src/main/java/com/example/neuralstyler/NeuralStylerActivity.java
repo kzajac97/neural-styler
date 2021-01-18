@@ -137,9 +137,9 @@ public class NeuralStylerActivity extends AppCompatActivity {
         FileInputStream inputStream = null;
 
         try {
-            if (activityStartingIntent.hasExtra("image")) {
+            if (activityStartingIntent.hasExtra(Const.imageIntentExtraLabel)) {
                 // when starting from MainActivity
-                inputStream = this.openFileInput(activityStartingIntent.getStringExtra("image"));
+                inputStream = this.openFileInput(activityStartingIntent.getStringExtra(Const.imageIntentExtraLabel));
             } else {  // when starting from Gallery or Camera Activity
                 inputStream = (FileInputStream) context.getContentResolver().openInputStream(Uri.parse(activityStartingIntent.getDataString()));
             }
@@ -181,8 +181,8 @@ public class NeuralStylerActivity extends AppCompatActivity {
         MediaStore.Images.Media.insertImage(
             getContentResolver(),
             image,
-            "NeuralStyleImage",
-            "Image Generated with Neural Style Transfer algorithm."
+            Const.neuralStylerImageTitle,
+            Const.neuralStylerImageDescription
         );
 
         Toast.makeText(context, "Image saved!", Toast.LENGTH_LONG).show();
@@ -195,8 +195,8 @@ public class NeuralStylerActivity extends AppCompatActivity {
      */
     final void shareImage(Bitmap photo) {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        String path = Environment.getExternalStorageDirectory() + File.separator + "temporary_file.jpg";
-        shareIntent.setType("image/jpeg");
+        String path = Environment.getExternalStorageDirectory() + File.separator + Const.temporaryImageName;
+        shareIntent.setType(Const.imageSaveType);
 
         File f = new File(path);
 
@@ -207,8 +207,8 @@ public class NeuralStylerActivity extends AppCompatActivity {
             Log.e(loggerTag, e.toString());
         }
 
-        shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///sdcard/temporary_file.jpg"));
-        startActivity(Intent.createChooser(shareIntent, "Share Image"));
+        shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(Const.sdcardPath));
+        startActivity(Intent.createChooser(shareIntent, Const.neuralStylerImageTitle));
     }
 
     /**
@@ -221,8 +221,10 @@ public class NeuralStylerActivity extends AppCompatActivity {
         Bitmap contentImage = Utils.getBitmapFromImageView(mainImageView);
 
         progressBar.setVisibility(View.VISIBLE);
+
         MagentaModel model = new MagentaModel(context);
         Bitmap stylizedImage = model.transferStyle(contentImage, styleImage);
+
         progressBar.setVisibility(View.INVISIBLE);
         Toast.makeText(context, "Image stylized!", Toast.LENGTH_LONG).show();
         mainImageView.setImageBitmap(stylizedImage);

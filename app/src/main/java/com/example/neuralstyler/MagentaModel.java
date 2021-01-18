@@ -71,7 +71,7 @@ public class MagentaModel {
             embedder = MagentaArbitraryImageStylizationV1256Int8Prediction1.newInstance(context);
             transformer = MagentaArbitraryImageStylizationV1256Int8Transfer1.newInstance(context);
         } catch (IOException e) {
-            Log.e(loggerTag,"Error! " + e.toString());
+            Log.e(loggerTag, e.toString());
         }
 
         TensorBuffer embedding = createEmbedding(style);

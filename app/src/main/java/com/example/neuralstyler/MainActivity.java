@@ -36,8 +36,6 @@ public class MainActivity extends AppCompatActivity {
     ImageButton loadPhotoButton;
     ImageButton stylizePhotoButton;
 
-    private static final int REQUEST_IMAGE_CAPTURE = 1;
-    private static final int RESULT_LOAD_IMG = 2;
     private final String loggerTag = "MainActivityLogger";
     private Context context;
 
@@ -103,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
         try {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            startActivityForResult(takePictureIntent, Const.REQUEST_IMAGE_CAPTURE);
         } catch (ActivityNotFoundException e) {
             Log.e(loggerTag, "Error! Activity not found!" + e.toString());
         }
@@ -115,20 +113,20 @@ public class MainActivity extends AppCompatActivity {
     final View.OnClickListener takePhotoButtonOnClickListener = v -> {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             Log.w(loggerTag, "Permission not granted!");
-            requestPermissions(new String[]{ Manifest.permission.CAMERA }, 1);
+            requestPermissions(new String[]{ Manifest.permission.CAMERA }, Const.RESULT_OK);
         }
         startCameraActivityForResult();
-    };  // takePhotoButtonOnClickListener
+    };
 
     /**
      * Functions handling Android Gallery to select any picture
      */
     private void startGalleryActivityForResult() {
         Intent selectPhotoIntent = new Intent(Intent.ACTION_PICK);
-        selectPhotoIntent.setType("image/*");
+        selectPhotoIntent.setType(Const.imageIntentDataType);
 
         try {
-            startActivityForResult(selectPhotoIntent, RESULT_LOAD_IMG);
+            startActivityForResult(selectPhotoIntent, Const.RESULT_LOAD_IMG);
         } catch (ActivityNotFoundException e) {
             Log.e(loggerTag, "Error! Activity not found!" + e.toString());
         }
@@ -140,10 +138,10 @@ public class MainActivity extends AppCompatActivity {
     final View.OnClickListener loadPhotoButtonOnClickListener = v -> {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             Log.w(loggerTag, "Permission not granted!");
-            requestPermissions(new String[]{ Manifest.permission.READ_EXTERNAL_STORAGE }, 1);
+            requestPermissions(new String[]{ Manifest.permission.READ_EXTERNAL_STORAGE }, Const.RESULT_OK);
         }
         startGalleryActivityForResult();
-    };  // loadPhotoButtonOnClickListener
+    };
 
     /**
      * Handles actions on Camera Activity result
@@ -151,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
      * @param data Camera Intent with captured photo as extras
      */
     final void onCameraResult(Intent data) {
-        Bitmap photo = (Bitmap) data.getExtras().get("data");
+        Bitmap photo = (Bitmap) data.getExtras().get(Const.intentExtrasDataKey);
         inputImageView.setImageBitmap(photo);
     }
 
@@ -167,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
         try {  // try load image from stream
             imageStream = getContentResolver().openInputStream(imageUri);
         } catch (FileNotFoundException e) {
-            Log.e(loggerTag, "Error!" + e.toString());
+            Log.e(loggerTag, e.toString());
         }
 
         Bitmap photo = BitmapFactory.decodeStream(imageStream);
@@ -181,14 +179,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
+        if (requestCode == Const.REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
             onCameraResult(data);
         }
 
-        if (requestCode == RESULT_LOAD_IMG && resultCode == Activity.RESULT_OK) {
+        if (requestCode == Const.RESULT_LOAD_IMG && resultCode == Activity.RESULT_OK) {
             onGalleryResult(data);
         }
-    }  // onActivityResult
+    }
 
     /**
      * Function starts NeuralStylerActivity
@@ -199,11 +197,11 @@ public class MainActivity extends AppCompatActivity {
         if (inputImageView.getDrawable() != null) {
             Bitmap photo = Utils.getBitmapFromImageView(inputImageView);
             String fileName = Utils.savePhotoToFile(photo, context);
-            neuralStylerIntent.putExtra("image", fileName);
+            neuralStylerIntent.putExtra(Const.imageIntentExtraLabel, fileName);
 
             startActivity(neuralStylerIntent);
         } else {
             Toast.makeText(context, "Load Image First!", Toast.LENGTH_LONG).show();
         }
-    };  // stylizePhotoButtonOnClickListener
-}  // class
+    };
+}

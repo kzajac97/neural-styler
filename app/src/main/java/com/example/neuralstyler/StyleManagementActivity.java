@@ -41,7 +41,6 @@ public class StyleManagementActivity extends AppCompatActivity {
 
     Bitmap loadedPhoto = null;
     private DBManager dbManager;
-    private static final int RESULT_LOAD_IMG = 2;  // 2 to unify result codes across app
     private final String loggerTag = "NeuralStyleLogger";
     private Context context;
 
@@ -96,11 +95,11 @@ public class StyleManagementActivity extends AppCompatActivity {
      */
     private void startGalleryActivityForResult() {
         Intent selectPhotoIntent = new Intent(Intent.ACTION_PICK);
-        selectPhotoIntent.setType("image/*");
+        selectPhotoIntent.setType(Const.imageIntentDataType);
 
         try {
             Log.d(loggerTag, "Starting Gallery Activity");
-            startActivityForResult(selectPhotoIntent, RESULT_LOAD_IMG);
+            startActivityForResult(selectPhotoIntent, Const.RESULT_LOAD_IMG);
         } catch (ActivityNotFoundException e) {
             Log.e(loggerTag, "Error! Activity not found!" + e.toString());
         }
@@ -109,7 +108,7 @@ public class StyleManagementActivity extends AppCompatActivity {
     final View.OnClickListener chooseStylePhotoOnClickListener = v -> {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             Log.w(loggerTag, "Permission not granted!");
-            requestPermissions(new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, 1);
+            requestPermissions(new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, Const.RESULT_OK);
         }
         startGalleryActivityForResult();
     };  // chooseStylePhotoOnClickListener
@@ -126,7 +125,7 @@ public class StyleManagementActivity extends AppCompatActivity {
         try {  // try load image from stream
             imageStream = getContentResolver().openInputStream(imageUri);
         } catch (FileNotFoundException e) {
-            Log.e(loggerTag, "Error! " + e.toString());
+            Log.e(loggerTag, e.toString());
         }
 
         loadedPhoto = BitmapFactory.decodeStream(imageStream);
@@ -139,7 +138,7 @@ public class StyleManagementActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == RESULT_LOAD_IMG && resultCode == Activity.RESULT_OK) {
+        if (requestCode == Const.RESULT_LOAD_IMG && resultCode == Activity.RESULT_OK) {
             onGalleryResult(data);
         }
     }
@@ -159,7 +158,7 @@ public class StyleManagementActivity extends AppCompatActivity {
                 dbManager.addStyle(painterName, stylePhotoPath);
                 Toast.makeText(context, "Style added!", Toast.LENGTH_LONG).show();
             } catch(Exception e) {
-                Log.e(loggerTag, "Error! " + e.toString());
+                Log.e(loggerTag, e.toString());
             }
         }
     }  // addStyle
