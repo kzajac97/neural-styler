@@ -41,6 +41,20 @@ public class Utils {
     }
 
     /**
+     * Convert Bitmap image to output stream
+     *
+     * @param photo Bitmap with photo content
+     *
+     * @return savable byte output stream
+     */
+    public static ByteArrayOutputStream bitmapToStream(Bitmap photo) {
+        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+        photo.compress(Bitmap.CompressFormat.JPEG, 100, byteStream);
+
+        return byteStream;
+    }
+
+    /**
      * Get Bitmap object from ImageView anywhere across app
      *
      * @param view non-empty ImageView object

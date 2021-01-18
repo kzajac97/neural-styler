@@ -1,6 +1,7 @@
 package com.example.neuralstyler;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -9,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
@@ -28,16 +30,21 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NavUtils;
 import androidx.core.content.ContextCompat;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 
 @RequiresApi(api = Build.VERSION_CODES.M)
 public class NeuralStylerActivity extends AppCompatActivity {
     ImageView mainImageView;
+    ImageButton spinnerMockButton;
+    ImageButton sharePhotoButton;
     ImageButton savePhotoButton;
     ImageButton stylizePhotoButton;
-    ImageButton launchSpinner;
     Spinner styleSelectorSpinner;
     ProgressBar progressBar;
 
@@ -66,6 +73,9 @@ public class NeuralStylerActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
         mainImageView = findViewById(R.id.mainImageView);
 
+        sharePhotoButton = findViewById(R.id.sharePhotoButton);
+        sharePhotoButton.setOnClickListener(sharePhotoButtonOnClickListener);
+
         savePhotoButton = findViewById(R.id.savePhotoButton);
         savePhotoButton.setOnClickListener(savePhotoButtonOnClickListener);
 
@@ -76,8 +86,8 @@ public class NeuralStylerActivity extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, dbManager.getAllPaintersNames());
         styleSelectorSpinner.setAdapter(adapter);
 
-        launchSpinner = findViewById(R.id.mimicSpinnerButton);
-        launchSpinner.setOnClickListener(v -> styleSelectorSpinner.performClick());
+        spinnerMockButton = findViewById(R.id.mimicSpinnerButton);
+        spinnerMockButton.setOnClickListener(v -> styleSelectorSpinner.performClick());
 
         Bitmap inputImage = BitmapFactory.decodeStream(getImageInputStream(getIntent()));
         mainImageView.setImageBitmap(inputImage);
@@ -152,6 +162,17 @@ public class NeuralStylerActivity extends AppCompatActivity {
     };  // savePhotoButtonOnClickListener
 
     /**
+     * shares generated image using Intent
+     */
+    final View.OnClickListener sharePhotoButtonOnClickListener = v -> {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
+            Log.w(loggerTag, "Permission not granted!");
+            requestPermissions(new String[] { Manifest.permission.SEND_SMS }, 1);
+        }
+        shareImage(Utils.getBitmapFromImageView(mainImageView));
+    };
+
+    /**
      * Saves image to MediaStore
      *
      * @param image Bitmap object with generated image
@@ -165,6 +186,29 @@ public class NeuralStylerActivity extends AppCompatActivity {
         );
 
         Toast.makeText(context, "Image saved!", Toast.LENGTH_LONG).show();
+    }
+
+    /**
+     * Shares image using Intent
+     *
+     * @param photo Bitmap object with generated image
+     */
+    final void shareImage(Bitmap photo) {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        String path = Environment.getExternalStorageDirectory() + File.separator + "temporary_file.jpg";
+        shareIntent.setType("image/jpeg");
+
+        File f = new File(path);
+
+        try {
+            FileOutputStream outputStream = new FileOutputStream(f);
+            outputStream.write(Utils.bitmapToStream(photo).toByteArray());
+        } catch (IOException e) {
+            Log.e(loggerTag, e.toString());
+        }
+
+        shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///sdcard/temporary_file.jpg"));
+        startActivity(Intent.createChooser(shareIntent, "Share Image"));
     }
 
     /**
